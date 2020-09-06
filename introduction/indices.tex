@@ -1,0 +1,41 @@
+% !TEX encoding = UTF-8
+% !TEX TS-program = pdflatex
+% !TEX root = ../main.tex
+
+%**************************************************************
+% Indici
+%**************************************************************
+\cleardoublepage
+\pdfbookmark{\contentsname}{tableofcontents}
+\setcounter{tocdepth}{2}
+\tableofcontents
+\clearpage
+
+\begingroup
+    \let\clearpage\relax
+    \let\cleardoublepage\relax
+    \let\cleardoublepage\relax
+    %*******************************************************
+    % Elenco delle figure
+    %*******************************************************
+    \phantomsection
+    \pdfbookmark{\listfigurename}{lof}
+    \listoffigures
+
+    \vspace*{8ex}
+
+    %*******************************************************
+    % Elenco delle tabelle
+    %*******************************************************
+    \phantomsection
+    \pdfbookmark{\listtablename}{lot}
+    \listoftables
+
+    \phantomsection
+    \pdfbookmark{\listalgorithmcfname}{loa}
+    \listofalgorithms
+
+    \vspace*{8ex}
+\endgroup
+
+\cleardoublepage

@@ -1,0 +1,30 @@
+\documentclass[10pt, a4paper, twoside, openright, english]{book}
+
+\input{support/packages}
+\input{support/config}
+
+\usepackage[a-1b]{pdfx}
+% \usepackage[pdfa]{hyperref}
+\begin{document}
+
+\frontmatter
+\input{introduction/frontpage}
+\input{introduction/colophon}
+\input{introduction/dedication}
+\input{introduction/acknowledgements}
+\input{introduction/indices}
+\cleardoublepage
+
+\mainmatter
+\input{chapters/introduction}
+\input{chapters/background}
+\input{chapters/equivalences}
+\input{chapters/examples}
+\input{chapters/conclusion}
+% \appendix
+% \input{chapters/capitolo-A}
+
+\backmatter
+\printbibliography
+
+\end{document}

@@ -1,0 +1,49 @@
+\chapter{Conclusion}
+\label{chap:conclusion}
+
+We have defined four suitable different quasiorders on words that are based on a number
+of simulation relations.
+We also proved that the pairs $(\wsdir{A}, \wsdirf{A})$, $(\wrdir{A}, \wsdirf{A})$,
+$(\wrdel{A}, \wsdirf{A})$ and $(\wrfair{A}, \wsdirf{A})$ can be plugged in the
+framework described in~\cite{ganty2020omegalang} in order to solve
+the language inclusion problem for $\omega$-regular languages.
+It turns out that the newly defined quasiorders are \emph{coarser} than the state-based,
+while being \emph{finer} than the syntactic ones.
+By means of some examples we have shown the advantage of using
+coarser relations in the algorithm to check the language inclusion.
+In particular, there is evidence that coarser relations lead to a smaller
+number of iterations in the procedures \refPrefixes{} and \refPeriods{}.
+
+We believe that, even if we considered numerous different simulation relations
+on states, many more could be used to build new quasiorders on words.
+The most promising continuation is to embed delayed and fair simulations
+in qos used in the procedure \refPeriods{}.
+We also remark that even though the $k$-lookahead simulations and the trace inclusions
+did not lead to suitable qos with the straightforward approach,
+this does not mean that they cannot be used in some brighter ways to define
+right-monotonic relations.
+We mention that there are a lot of well-known simulations, and possibly
+each one can be used to define suitable coarser qos on words.
+For example, the \emph{multipebble} and the \emph{fixed-words}
+simulations~\cite{clemente2017efficient} are
+coarser than the simulations that we used, but finer than the trace inclusions.
+
+The natural extension of this work would be to provide an implementation
+for the framework.
+This would allow us to compare the practical performance of the algorithm
+using different pairs of qos.
+In fact, we used as primary metric for measuring the performance the number of
+iterations of the procedures \refPrefixes{} and \refPeriods{},
+while in practice several factors impact on the efficiency of the algorithm.
+In the past, algorithms based on simulations achieved excellent results,
+for example in~\cite{bonchi2013checking} they use the
+\emph{bisimulation up to conguence} in order to check the inclusion between
+the languages of two FAs.
+They devise an optimisation of the classical algorithm by Hopcroft and Karp~\cite{hopcroft1973n},
+and their approach exponentially improves the performance of the
+\emph{antichain algorithm}~\cite{de2006antichains}.
+We believe that in the same way they have been able to achieve such a valuable
+result using simulations, the~\cite{ganty2020omegalang}'s framework combined with the
+simulation-based quasiorders, if properly implemented, can lead
+to a tool that may even compete with the existing state of the art
+implementations to solve the language inclusion problem for $\omega$-regular languages.

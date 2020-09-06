@@ -1,0 +1,1359 @@
+\chapter{Quasiorders on words}
+\label{chap:qos}
+
+In this chapter we define various simulation-based qos and we point out how
+they can be used to solve the language inclusion problem.
+In particular, in Section~\ref{sec:new-qos} we introduce a number of different simulation-based
+quasiorders on words and for each one of them we prove some properties;
+in Section~\ref{sec:using-qos} we show how the defined qos can be used to
+solve the language inclusion problem and, finally,
+in Section~\ref{sec:overview-qos} we discuss the relations between
+the considered quasiorders.
+
+\section{Simulation-based quasiorders on $\Sigma^*$}
+\label{sec:new-qos}
+
+In this section we define a number of qos on $\Sigma^*$ that are simulation-based.
+For each one of them we provide one example, the proof of being a computable
+well-quasiorder, we discuss its monotonicity properties and we
+make some meaningful comparisons with other qos.
+
+\begin{definition}
+\label{defn:wsdir}
+Let $u,v \in \Sigma^*$.
+\begin{equation*}
+\begin{split}
+u \wsdir{A} v \overset{\triangle}{\Longleftrightarrow}
+& \; \forall (q_1, q_2) \in ctx_{\mathcal{A}}(u) \;\exists (q_3,q_4) \in ctx_{\mathcal{A}}(v) \\
+& \; \textrm{\emph{such that}}\: q_1 \revdir q_3 \;\wedge\; q_2 \dir q_4
+\end{split}
+\end{equation*}
+\end{definition}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+  \node[state,initial] (q_0) {$q_0$};
+  \node[state,accepting] (q_1) [above right of=q_0] {$q_1$};
+  \node[state] (q_2) [right of=q_1]{$q_2$};
+  \node[state] (q_3) [right of=q_2]{$q_3$};
+  \node[state] (q_3) [right of=q_2]{$q_3$};
+  \node[state,accepting] (q_4) [above right of=q_3, xshift=0.6cm]{$q_4$};
+  \node[state,accepting] (q_5) [right of=q_4]{$q_5$};
+  \node[state,accepting] (q_6) [below right of=q_3, xshift=0.6cm]{$q_6$};
+  \node[state] (q_7) [right of=q_6]{$q_7$};
+  \node[state] (q_8) [below right of=q_0, yshift=-1cm]{$q_8$};
+  \node[state] (q_9) [right of=q_8]{$q_9$};
+  \node[state] (q_10) [right of=q_9]{$q_{10}$};
+  \node[state,accepting] (q_11) [right of=q_10]{$q_{11}$};
+  \node[state,accepting] (q_12) [right of=q_11]{$q_{12}$};
+  \path[->]
+  (q_0) edge node {$a$} (q_1)
+  (q_1) edge node {$a$} (q_2)
+  (q_2) edge node {$b$} (q_3)
+  (q_3) edge node {$e$} (q_4)
+  (q_4) edge node {$f$} (q_5)
+  (q_5) edge [loop above] node {$a$} (q_5)
+  (q_3) edge node {$e$} (q_6)
+  (q_6) edge node {$a$} (q_7)
+  (q_7) edge [loop above] node {$a$} (q_7)
+  (q_0) edge node {$a,c$} (q_8)
+  (q_8) edge node {$a,c$} (q_9)
+  (q_9) edge node {$d$} (q_10)
+  (q_10) edge node {$e$} (q_11)
+  (q_11) edge node {$f$} (q_12)
+  (q_11) edge node {$a$} (q_7)
+  (q_12) edge [loop above] node {$a$} (q_12)
+  ;
+\end{tikzpicture}
+\caption{Example of $\wsdir{A}$}
+\label{fig:example-wsdir}
+\end{figure}
+
+\begin{example}
+Let $\mathcal{A}$ be the automaton in Figure~\ref{fig:example-wsdir}.
+We observe that $b \wsdir{A} d$.
+Consider $\ctx{A}{b} = \{(q_2,q_3)\}$ and $\ctx{A}{d} = \{(q_9,q_{10})\}$:
+if from $q_2$ Spoiler plays $q_2 \transr{a} q_1 \transr{a} q_0$, Duplicator
+can play $q_9 \transr{a} q_8 \transr{a} q_0$ and since $q_0 \in I$
+Duplicator wins, so that $q_2 \revdir q_9$.
+Observe that doesn't matter if $q_1 \in F$, since $\revdir$ doesn't
+impose any condition on final states.
+It also holds that $q_3 \dir q_{10}$: if Spoiler plays $q_3 \trans{e} q_4$,
+Duplicator can answer $q_{10} \trans{e} q_{11}$ and $q_4 \dir q_{11}$.
+Furthermore, $q_4 \in F$ and $q_{11} \in F$.
+The other cases are similar.
+\end{example}
+
+\begin{proposition}
+\label{prop:wsdir-wqo}
+\[ \wsdir{A} \; \textrm{is a decidable wqo.} \]
+\end{proposition}
+
+\begin{proof}
+For every $u \in \Sigma^*$, $ctx_{\mathcal{A}}(u)$ is a finite and computable set,
+$\dir$ and $\revdir$ are computable
+so that $\wsdir{A}$ is a decidable wqo.
+\end{proof}
+
+\begin{proposition}[Monotonicity]
+\label{prop:wsdir-monotonicity}
+Let $u,v,x,y \in \Sigma^*$.
+\[ u \wsdir{A} v \Longrightarrow xuy \wsdir{A} xvy \]
+\end{proposition}
+
+\begin{proof}
+Let $(q'_1, q'_2) \in ctx_{\mathcal{A}}(xuy)$, then $\exists(q_1, q_2) \in ctx_{\mathcal{A}}(u)$ such that
+$q'_1 \overset{x}{\rightsquigarrow} q_1$ and
+$q_2 \overset{y}{\rightsquigarrow} q'_2$.
+Furthermore, since $u \wsdir{A} v$, $\exists(q_3, q_4) \in ctx_{\mathcal{A}}(v)$
+such that $q_1 \revdir q_3 \;\wedge\; q_2 \dir q_4$.
+For Lemma~\ref{lemma:goes-retro}, $q'_1 \goes{x} q_1$ implies that $q_1 \goes{x^R}_R q'_1$,
+and since $q_1 \revdir q_3$, $\exists q'_3 \in Q$ such that $ q_3 \goes{x^R}_R q'_3$.
+Furthermore, for the definition of reverse simulation $q'_1 \revdir q'_3$ holds.
+Observe that $q_2 \goes{y} q'_2$ and $q_2 \dir q_4$ imply that $\exists q'_4 \in Q$
+such that $q_4 \goes{y} q'_4$ and, due to the definition of direct simulation,
+$q'_2 \dir q'_4$.
+$(q_3',q_4') \in ctx_{\mathcal{A}}(xvy)$ holds because
+$(q_3, q_4) \in ctx_{\mathcal{A}}(v)$, $q'_3 \overset{x}{\rightsquigarrow} q_3$
+and $q_4 \overset{y}{\rightsquigarrow} q'_4$.
+\end{proof}
+
+We now discuss the relations between $\wsdir{A}$ and the qos on $\Sigma^*$
+presented in Section~\ref{sec:qos-on-words}.
+
+\begin{proposition}
+\[ \leq^1_{\mathcal{A}} \; \subseteq \; \wsdir{A} \]
+\end{proposition}
+
+\begin{proof}
+Let $u , v \in \Sigma^*$ such that  $u \leq^1_{\mathcal{A}} v$.
+Then $ctx_{\mathcal{A}}(u) \subseteq ctx_{\mathcal{A}}(v)$ so that
+$\forall(q_1, q_2) \in ctx_{\mathcal{A}}(u) \;
+\exists (q_3,q_4) \in ctx_{\mathcal{A}}(v)$ such that $q_1 \revdir q_3 \;\wedge\; q_2 \dir q_4$
+because $\dir$ and  $\revdir$ are reflexive.
+Then, $\leq^1_{\mathcal{A}} \; \subseteq \; \wsdir{A}$.
+\end{proof}
+
+\begin{proposition}
+Let $\mathcal{A}$ be an FA.
+\[  \wsdir{A} \; \subseteq \; \leqq_{\mathcal{L}(\mathcal{A})} \]
+\end{proposition}
+
+\begin{proof}
+Let $u, v \in \Sigma^*$ such that $u \wsdir{A} v$,
+$(x,y) \in ctx_{ \mathcal{L}( \mathcal{A} ) }(u)$,
+$( q_1,q_2) \in ctx_{ \mathcal{A} }(u)$ such that
+$x \in W_{I,q_1}^{ \mathcal{A} }$ and $y \in W_{q_2,F}^{ \mathcal{A} }$.
+Since $ u \wsdir{A} v$, $ \exists (q_3,q_4) \in ctx_{ \mathcal{A} }(v)$
+such that $q_1 \revdir q_3 \;\wedge\; q_2 \dir q_4$.
+Since $x \in W_{I,q_1}^{ \mathcal{A} }$ and $q_1 \revdir q_3$,
+$x \in W_{I,q_3}^{ \mathcal{A} }$.
+Similarly, since $y \in W_{q_2, F}^{ \mathcal{A} }$ and $q_2 \dir q_4$,
+$y \in W_{q_4, F}^{ \mathcal{A} }$ so that
+$(x,y) \in ctx_{ \mathcal{L}( \mathcal{A}) }(v)$.
+Then, $\wsdir{A} \; \subseteq \; \leqq_{\mathcal{L}(\mathcal{A})}$.
+\end{proof}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+
+   \node[state,initial] (0)   {$q_0$};
+   \node[state] (2) [right=of 0] {$q_2$};
+   \node[state] (1) [above = of 2] {$q_1$};
+   \node[state] (3) [below= of 2] {$q_3$};
+   \node[state] (5) [right=of 2] {$q_5$};
+   \node[state] (4) [above = of 5] {$q_4$};
+   \node[state] (6) [below= of 5] {$q_6$};
+   \node[state,accepting] (7) [right=of 5] {$q_7$}
+    ;
+    \path[->]
+    (0) edge  node {a,b} (1)
+        edge  node {a}   (2)
+        edge  node {b}   (3)
+    (1) edge  node {c}   (4)
+    (2) edge  node {d}   (5)
+    (3) edge  node {d}   (6)
+    (4) edge  node {a}   (7)
+    (5) edge  node {a}   (7)
+    (6) edge  node {a}   (7)
+    ;
+\end{tikzpicture}
+\caption{FA accepting the language $(a+b)ca + ada + bda$.}
+\label{fig:fa1}
+\end{figure}
+
+\begin{remark}
+Let $\mathcal{A}$ be the FA represented in Figure~\ref{fig:fa1}.
+In this case $ctx_{\mathcal{A}}(c) = \{(q_1,q_4)\}$ and $ctx_{\mathcal{A}}(d) = \{(q_2,q_5), (q_3,q_6)\}$
+so that $d \nleq^1_{\mathcal{A}} c$.
+Furthermore we observe that $q_2 \revdir q_1$, $q_5 \dir q_4$, $q_3 \revdir q_1$ and $q_6 \dir q_4$
+so that $\forall (p_1,p_2) \in ctx_{\mathcal{A}}(d) \; \exists (p_3,p_4) \in ctx_{\mathcal{A}}(c)$ such that
+$p_1 \revdir p_3 \;\wedge\; p_2 \dir p_4$ and then $d \wsdir{A} c$.
+This shows that \fbox{$\leq_{\mathcal{A}} \; \subsetneq \; \wsdir{A}$}.
+Let us observe that $ctx_{\mathcal{L}(\mathcal{A})}(c) = \{(a,a), (b,a)\}$ and
+$ctx_{\mathcal{L}(\mathcal{A})}(d) = \{(a,a), (b,a)\}$ so that
+$c \leqq_{\mathcal{L}(\mathcal{A})} d$.
+Furthermore $c \wsdir{A} d$ does not hold
+because $\nexists (p_3,p_4) \in ctx_{\mathcal{A}}(d)$ such that
+$q_1 \revdir p_3$: $q_2 \overset{b}{\nrightarrow}_R$ and $q_3 \overset{a}{\nrightarrow}_R$.
+This shows that \fbox{$ \wsdir{A} \; \subsetneq \; \leqq_{\mathcal{L}(\mathcal{A})}$}.
+\end{remark}
+
+\begin{proposition}
+\label{proposition:wsdir-vs-wrdir}
+\[ \wsdir{A} \; \subseteq \; \wrdir{A} \; \; \; \; \; \; \; \; \; \;
+\wsdir{A} \; \subseteq \; \wldir{A} \]
+\end{proposition}
+
+\begin{proof}
+Let $u,v \in \Sigma^*$ such that $u \wsdir{A} v$.
+Consider $(q_1,q_2) \in ctx_{\mathcal{A}}(u)$ such that $q_1 \in I$ so that $q_2 \in post_u^{\mathcal{A}}(I)$.
+Then $\exists (q_3,q_4) \in ctx_{\mathcal{A}}(v)$ such that $q_1 \revdir q_3 \;\wedge\; q_2 \dir q_4$.
+Observe that $q_1 \in I$ and $q_1 \revdir q_3$ imply that $q_3 \in I$ and then $q_4 \in post_v^{\mathcal{A}}(I)$.
+Since $q_2 \dir q_4$, $u \wrdir{A} v$.
+The proof that $\wsdir{A} \subseteq \; \wldir{A}$ is symmetric.
+\end{proof}
+
+\begin{remark}
+\[  \wsdir{A} \; \subseteq (\wrdir{A} \cap \wldir{A}) \]
+\end{remark}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+
+   \node[state,initial] (0)   {$q_0$};
+   \node[state] (2) [right=of 0] {$q_2$};
+   \node[state] (1) [above = of 2] {$q_1$};
+   \node[state] (3) [below left= of 2,yshift=-0.6cm] {$q_3$};
+   \node[state] (4) [below right= of 2,yshift=-0.6cm] {$q_4$};
+   \node[state,accepting] (5) [right=of 2] {$q_5$};
+   \path[->]
+       (0) edge  node {a}   (1)
+           edge  node {b}   (2)
+           edge  node {d}   (3)
+       (1) edge  node {c}   (5)
+       (2) edge  node {c}   (5)
+       (3) edge  node {a}   (4)
+       (4) edge  node {e}   (5)
+   ;
+\end{tikzpicture}
+\caption{FA accepting the language $ac + bc + dae$.}
+\label{fig:fa2}
+\end{figure}
+
+\begin{remark}
+Let $\mathcal{A}$ be the FA in Figure~\ref{fig:fa2}.
+Observe that $a \wrdir{A} b$: $post_a^{\mathcal{A}}(I) = \{q_1\}$, and $q_2 \in post_b^{\mathcal{A}}(I)$ simulates $q_1$.
+Furthermore, $a \wldir{A} b$ because $pre_a^{\mathcal{A}}(F) = \varnothing$.
+Observe that $(q_3,q_4) \in ctx_{\mathcal{A}}(a)$, but $\nexists (p_3,p_4) \in ctx_{\mathcal{A}}(b)$ such that
+$p_4 \overset{e}{\rightarrow} $ and $p_3 \overset{d}{\rightarrow}_R$,
+and then $a \wsdir{A} b$ does not hold.
+This shows that $(a,b) \in \; \wrdir{A} \cap \wldir{A}$ and
+$(a,b) \notin \; \wsdir{A}$ so that
+\fbox{$\wsdir{A} \; \subsetneq \; \wrdir{A} \cap \wldir{A}$}.
+\end{remark}
+
+We now give a definition of a quasiorder that is a strengthened version of
+$\wsdir{A}$.
+
+\begin{definition}
+\label{defn:wsdirf}
+Let $u,v \in \Sigma^*$.
+\begin{equation*} \label{eq1}
+\begin{split}
+u \wsdirf{A} v \overset{\triangle}{\Longleftrightarrow}
+& \; \forall (q_1, q_2) \in ctx_{\mathcal{A}}(u) \;\exists (q_3,q_4) \in ctx_{\mathcal{A}}(v) \; \textrm{\emph{such that}}\: \\
+& \; \; (i) \; q_1 \bwdir q_3 \; \wedge \; q_2 \dir q_4 \\
+& \; \; (ii) \; q_1 \goesf{u} q_2 \Longrightarrow q_3 \goesf{v} q_4
+\end{split}
+\end{equation*}
+\end{definition}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+  \node[state,initial] (q_0) {$q_0$};
+  \node[state,accepting] (q_1) [above right of=q_0] {$q_1$};
+  \node[state] (q_2) [right of=q_1]{$q_2$};
+  \node[state,accepting] (q_3) [right of=q_2]{$q_3$};
+  \node[state] (q_4) [right of=q_3]{$q_4$};
+  \node[state] (q_5) [right of=q_4]{$q_5$};
+  \node[state,accepting] (q_6) [below right of=q_5]{$q_6$};
+  \node[state,accepting] (q_7) [below right of=q_0]{$q_7$};
+  \node[state] (q_8) [right of=q_7]{$q_8$};
+  \node[state] (q_9) [right of=q_8]{$q_9$};
+  \node[state,accepting] (q_10) [right of=q_9]{$q_{10}$};
+  \node[state] (q_11) [right of=q_10]{$q_{11}$};
+  \path[->]
+  (q_0) edge node {$a$} (q_1)
+  (q_1) edge node {$a$} (q_2)
+  (q_2) edge node {$b$} (q_3)
+  (q_3) edge node {$c$} (q_4)
+  (q_4) edge node {$d$} (q_5)
+  (q_5) edge node {$e$} (q_6)
+  (q_0) edge node  {$a$} (q_7)
+  (q_7) edge node  {$a$} (q_8)
+  (q_8) edge node  {$f$} (q_9)
+  (q_9) edge node  {$g$} (q_10)
+  (q_10) edge node {$h$} (q_11)
+  (q_11) edge node {$e$} (q_6)
+  ;
+\end{tikzpicture}
+\caption{Example of $\wsdirf{A}$}
+\label{fig:example-wsdirf}
+\end{figure}
+
+\begin{example}
+Let $\mathcal{A}$ be the automaton in Figure~\ref{fig:example-wsdirf}.
+We observe that $bcd \wsdirf{A} fgh$.
+Consider $\ctx{A}{bcd} = \{(q_2,q_5)\}$, $\ctx{A}{fgh} = \{(q_8,q_{11})\}$:
+if from $q_2$ Spoiler plays $q_2 \transr{a} q_1 \transr{a} q_0$
+Duplicator can play $q_8 \transr{a} q_7 \transr{a} q_0$.
+Furthermore, $q_1 \in F$, $q_7 \in F$ and $q_0 \in I$ so that \emph{both initial and final states}
+are matched.
+This implies $q_2 \bwdir q_8$.
+It is also easy to see that $q_5 \dir q_{11}$.
+Furthermore observe that, since $q_2 \goesf{bdc} q_5$, it holds that $q_8 \goesf{fgh} q_{11}$.
+\end{example}
+
+\begin{proposition}
+\label{prop:wsdirf-wqo}
+\[ \wsdirf{A} \; \textrm{is a decidable wqo.} \]
+\end{proposition}
+
+\begin{proof}
+For every $u \in \Sigma^*$, $ctx_{\mathcal{A}}(u)$ is a finite and computable set,
+$\dir$ and $\bwdir$ are computable, $ \goesf{u}$ is computable
+so that $\wsdirf{A}$ is a decidable wqo.
+\end{proof}
+
+\begin{proposition}[Monotonicity]
+\label{proposition:monotonicity2}
+Let $u,v,x,y \in \Sigma^*$.
+\[ u \wsdirf{A} v \Longrightarrow xuy \wsdirf{A} xvy \]
+\end{proposition}
+
+\begin{proof}
+Let $(q'_1, q'_2) \in ctx_{\mathcal{A}}(xuy)$, so that there exists $\exists(q_1, q_2) \in ctx_{\mathcal{A}}(u)$ such that
+$q'_1 \goes{x} q_1$ and
+$q_2 \goes{y} q'_2$.
+%Consider the case in which $q_1' \goesf{xuy} q_2'$ doesn't hold.
+Then, by $u \wsdirf{A} v$, $\exists (q_3,q_4) \in ctx_{\mathcal{A}}(v)$
+such that $q_1 \bwdir q_3 \; \wedge \; q_2 \dir q_4$.
+Since $q_1 \goes{x^R} q_1'$ and $q_1 \bwdir q_3$, $\exists q_3' \in Q$ such that
+$q_3 \goes{x^R} q_3'$.
+By definition of backward simulation, $q_1' \bwdir q_3'$.
+Since $q_2 \goes{y} q_2'$ and $q_2 \dir q_4$, $\exists q_4' \in Q$ such that
+$q_4 \goes{y} q_4'$.
+By definition of direct simulation, $q_2' \dir q_4'$.
+Observe that $(q_3',q_4') \in ctx_{\mathcal{A}}(xvy)$ because $q_3' \goes{x} q_3$,
+$(q_3,q_4) \in ctv_{\mathcal{A}}(v)$ and $q_4 \goes{y} q_4'$.
+Assume now that $q_1' \goesf{xuy} q_2'$ holds.
+At least one of the following conditions holds:
+$ (i) \; q_1' \goesf{x} q_1 \goes{u} q_2 \goes{y} q_2'; \;
+ (ii) \; q_1' \goes{x} q_1 \goesf{u} q_2 \goes{y} q_2'; \;
+ (iii) \; q_1' \goes{x} q_1 \goes{u} q_2 \goesf{y} q_2' $.
+If $q_1' \goesf{x} q_1 \goes{u} q_2 \goes{y} q_2'$, by $u \wsdirf{A} v$,
+$\exists (q_3,q_4) \in ctx_{\mathcal{A}}(v)$ such that $q_1 \bwdir q_3 \; \wedge \; q_2 \dir q_4$.
+Since $q_1 \goesf{x^R} q_1'$ and $q_1 \bwdir q_3$, $\exists q_3' \in Q$ such that
+$q_3 \goesf{x^R} q_3'$.
+By definition of backward simulation, $q_1' \bwdir q_3'$.
+Since $q_2 \goes{y} q_2'$ and $q_2 \dir q_4$, $\exists q_4' \in Q$ such that
+$q_4 \goes{y} q_4'$.
+By definition of direct simulation, $q_2' \dir q_4'$.
+Observe that $(q_3',q_4') \in ctx_{\mathcal{A}}(xvy)$ because $q_3' \goesf{x} q_3$,
+$(q_3,q_4) \in ctv_{\mathcal{A}}(v)$ and $q_4 \goes{y} q_4'$.
+The subcase $q_1' \goes{x} q_1 \goes{u} q_2 \goesf{y} q_2'$ is similar.
+If $q_1' \goes{x} q_1 \goesf{u} q_2 \goes{y} q_2'$, by $u \wsdirf{A} v$,
+$\exists (q_3,q_4) \in ctx_{\mathcal{A}}(v)$ such that $q_1 \bwdir q_3 \; \wedge \; q_2 \dir q_4$.
+Furthermore, $q_3 \goesf{v} q_4$.
+Since $q_1 \goes{x^R} q_1'$ and $q_1 \bwdir q_3$, $\exists q_3' \in Q$ such that
+$q_3 \goes{x^R} q_3'$.
+By definition of backward simulation, $q_1' \bwdir q_3'$.
+Since $q_2 \goes{y} q_2'$ and $q_2 \dir q_4$, $\exists q_4' \in Q$ such that
+$q_4 \goes{y} q_4'$.
+By definition of direct simulation, $q_2' \dir q_4'$.
+Observe that $(q_3',q_4') \in ctx_{\mathcal{A}}(xvy)$ because $q_3' \goes{x} q_3$,
+$(q_3,q_4) \in ctv_{\mathcal{A}}(v)$ and $q_4 \goes{y} q_4'$.
+In each possible subcase $q_3' \goesf{xvy} q_4'$.
+\end{proof}
+
+\begin{proposition}
+\label{remark:wsdir-sub-wsdirf}
+\[\wsdirf{A} \; \subseteq \; \wsdir{A}\]
+\end{proposition}
+
+\begin{proof}
+It is immediate to see that $\mathord{\wsdirf{A}}  \subseteq  \mathord{\wsdir{A}}$,
+since $\mathord{\bwdir} \; \subseteq \mathord{\revdir}$ (see Section~\ref{sec:simulation}).
+\end{proof}
+
+
+The following quasiorder is a generalization of $\wrdir{A}$, that exploits the
+\emph{delayed simulation} in order to define a coarser relation.
+
+\begin{definition}
+\label{defn:wrdel}
+Let $u,v \in \Sigma^*$.
+\[ u \wrdel{A} v \overset{\triangle}{\Longleftrightarrow}
+    \forall p \in post_u^{\mathcal{A}}(I) \; \exists q \in post_v^{\mathcal{A}}(I) \textrm{ such that } p \del q \]
+\end{definition}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2.5cm,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+  \node[state,initial] (q_0) {$q_0$};
+  \node[state,accepting] (q_1) [below left of=q_0] {$q_1$};
+  \node[state] (q_2) [below of=q_1]{$q_2$};
+  \node[state] (q_3) [below right of=q_0]{$q_3$};
+  \node[state,accepting] (q_4) [below of=q_3]{$q_4$};
+  \path[->]
+  (q_0) edge node {$a$} (q_1)
+  (q_0) edge [below left] node {$b$} (q_3)
+  (q_1) edge [bend left] node {$c$} (q_2)
+  (q_2) edge [bend left] node {$d$} (q_1)
+  (q_3) edge [bend left] node {$c$} (q_4)
+  (q_4) edge [bend left] node {$d$} (q_3)
+  ;
+\end{tikzpicture}
+\caption{Example of $\wrdel{A}$}
+\label{fig:example-wrdel}
+\end{figure}
+
+\begin{example}
+Let $\mathcal{A}$ be the automaton in Figure~\ref{fig:example-wrdel}.
+We observe that $a \wrdel{A} b$.
+Consider $\posti{a}{A} = \{q_1\}$, $\posti{b}{A} = \{q_3\}$:
+from $q_1$ starts the infinite  trace
+$\pi_0 = q_1 \trans{c} q_2 \trans{d} q_1 \trans{c} \cdots$,
+which can be matched with the trace
+$\pi_1 = q_3 \trans{c} q_4 \trans{d} q_3 \trans{c} \cdots$.
+Furthermore, each final state in $\pi_0$ will be matched after exactly one move.
+This implies $q_1 \del q_3$, so that $a \wrdel{A} b$.
+\end{example}
+
+\begin{proposition}
+\label{prop:wrdel-wqo}
+\[\wrdel{A} \textrm{ is a decidable wqo.}\]
+\end{proposition}
+
+\begin{proof}
+For every $u \in \Sigma^*$, $post_u^{\mathcal{A}}(I)$ is a finite and computable set,
+$\del$ is computable so that $\wrdel{A}$ is a decidable wqo.
+\end{proof}
+
+\begin{proposition}[Right monotonicity]
+\label{prop:monotonicity3}
+Let $u,v,x \in \Sigma^*$.
+\[ u \wrdel{A} v \Longrightarrow ux \wrdel{A} vx \]
+\end{proposition}
+
+\begin{proof}
+Let $q \in post_{ux}^{\mathcal{A}}(I)$, then $\exists i \in I, p \in Q$
+such that $i \goes{u} p \goes{x} q$.
+Since $u \wrdel{A} v$, $\exists i' \in I, p' \in Q$ such that
+$i' \goes{v} p'$ and $p \del p'$.
+We observe that $p \goes{x} q$ and $p \del p'$ implies that
+$\exists q' \in Q$ such that $p' \goes{x} q'$.
+Furthermore, by definition of delayed simulation, $q \del q'$.
+We conclude by observing that $q' \in post_{vx}^{\mathcal{A}}(I)$
+implies that $ux \wrdel{A} vx$.
+\end{proof}
+
+\begin{example}
+Let $\mathcal{A}$ be automaton in Figure~\ref{fig:wrdel-not-left-monotonic}.
+Observe that $u \wrdel{A} v$, because $post_{u}^{\mathcal{A}}(I) = \{q_1\}$,
+$q_1 \del q_4$ and $q_4 \in post_{v}^{\mathcal{A}}(I)$.
+Consider now $post_{wu}^{\mathcal{A}}(I) = \{q_8\}$: since
+$post_{wv}^{\mathcal{A}}(I) = \{q_{11}\}$, $\nexists q \in post_{wv}^{\mathcal{A}}(I)$
+such that $q_8 \del q$.
+This is due to the fact that $q_8 \trans{a} q_9$, but $q_{11} \ntrans{a}$.
+This implies that $u \wrdel{A} v \centernot\implies wu \wrdel{A} wv$, so that
+$\wrdel{A}$ \emph{is not a left-monotonic quasiorder}.
+\end{example}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+
+   \node[state,initial] (q_0)   {$q_0$};
+   \node[state] (q_4) [above right = of q_0, yshift=-0.5cm] {$q_4$};
+   \node[state] (q_7) [below right = of q_0, yshift=0.5cm] {$q_7$};
+   \node[state,accepting] (q_1) [above = of q_4] {$q_1$};
+   \node[state] (q_{10}) [below = of q_7] {$q_{10}$};
+   \node[state] (q_2) [right = of q_1] {$q_2$};
+   \node[state] (q_3) [right = of q_2] {$q_3$};
+   \node[state,accepting] (q_5) [right = of q_4] {$q_5$};
+   \node[state] (q_6) [right = of q_5] {$q_6$};
+   \node[state] (q_8) [right = of q_7] {$q_8$};
+   \node[state] (q_9) [right = of q_8] {$q_9$};
+   \node[state] (q_{11}) [right = of q_{10}] {$q_{11}$};
+   \node[state] (q_{12}) [right = of q_{11}] {$q_{12}$};
+
+   \path[->]
+       (q_0) edge  node {u}   (q_1)
+       (q_0) edge [above] node {v}   (q_4)
+       (q_0) edge node {w}   (q_7)
+       (q_0) edge [below left] node {w}   (q_{10})
+       (q_1) edge node {a}   (q_2)
+       (q_2) edge node {b}   (q_3)
+       (q_3) edge [loop above] node {c}   (q_3)
+       (q_4) edge node {a}   (q_5)
+       (q_5) edge node {b}   (q_6)
+       (q_6) edge [loop above] node {c}   (q_6)
+       (q_7) edge node {u}   (q_8)
+       (q_8) edge node {a}   (q_9)
+       (q_{10}) edge node {v}   (q_{11})
+       (q_{11}) edge node {b}   (q_{12})
+   ;
+\end{tikzpicture}
+\caption{Automaton that shows that $\wrdel{A}$ is not left-monotonic}
+\label{fig:wrdel-not-left-monotonic}
+\end{figure}
+
+\begin{proposition}
+\label{prop:wrdir-smaller-wrdel}
+\[ \mathord{\wrdir{A}} \subseteq \mathord{\wrdel{A}} \]
+\end{proposition}
+
+\begin{proof}
+Let $u,v \in \Sigma^*$ such that $u \wrdir{A} v$.
+This implies that $\forall u,v \in \Sigma^*$,
+if $\forall p \in post_u^{\mathcal{A}}(I), \exists q \in post_v^{\mathcal{A}}(I)$
+such that $p \dir q$, then it also holds that $p \del q$.
+This is implied by $\mathord{\dir} \subseteq \mathord{\del}$
+(see Section~\ref{sec:simulation}).
+\end{proof}
+
+The following quasiorder is the last one that we define and is another generalization
+of $\wrdir{A}$ that relies on the \emph{fair} simulation.
+
+\begin{definition}
+\label{defn:wrfair}
+Let $u,v \in \Sigma^*$.
+\[ u \wrfair{A} v \overset{\triangle}{\Longleftrightarrow}
+    \forall p \in post_u^{\mathcal{A}}(I) \; \exists q \in post_v^{\mathcal{A}}(I) \textrm{ such that } p \fair q \]
+\end{definition}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2.5cm,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+  \node[state,initial] (q_0) {$q_0$};
+  \node[state] (q_1) [below left of=q_0] {$q_1$};
+  \node[state] (q_2) [below left of=q_1]{$q_2$};
+  \node[state,accepting] (q_3) [below right of=q_1]{$q_3$};
+  \node[state,accepting] (q_4) [below right of=q_0]{$q_4$};
+  \path[->]
+  (q_0) edge node {$a$} (q_1)
+  (q_0) edge [below left] node {$b$} (q_4)
+  (q_1) edge node {$c$} (q_2)
+  (q_2) edge node {$d$} (q_3)
+  (q_3) edge node {$e$} (q_1)
+  (q_4) edge [loop below] node {$c,d,e$} (q_4)
+  ;
+\end{tikzpicture}
+\caption{Example of $\wrfair{A}$}
+\label{fig:example-wrfair}
+\end{figure}
+
+\begin{example}
+Let $\mathcal{A}$ be the automaton in Figure~\ref{fig:example-wrfair}.
+We observe that $a \wrfair{A} b$.
+Consider $\posti{a}{A} = \{q_1\}$, $\posti{b}{A} = \{q_4\}$:
+from $q_1$ starts the fair trace
+$\pi_0 = q_1 \trans{c} q_2 \trans{d} q_3 \trans{e} q_1 \trans{c} \cdots$,
+which can be matched with the trace
+$\pi_1 = q_4 \trans{c} q_4 \trans{d} q_4 \trans{e} q_4 \trans{c} q_4 \cdots$.
+Furthermore, also $\pi_1$ is fair.
+This implies $q_1 \fair q_3$, so that $a \wrfair{A} b$.
+\end{example}
+
+\begin{proposition}
+\label{prop:wrfair-wqo}
+\[\wrfair{A} \textrm{ is a decidable wqo.}\]
+\end{proposition}
+
+\begin{proof}
+For every $u \in \Sigma^*$, $post_u^{\mathcal{A}}(I)$ is a finite and computable set,
+$\fair$ is computable so that $\wrfair{A}$ is a decidable wqo.
+\end{proof}
+
+\begin{remark}\label{remark:fair}
+Let us observe that if $p\fair q$ and $\pi$ is a fair trace
+starting from $p$ then for all $p'\in Q$ such that, for some $w\in \Sigma^*$,
+$p\goes{w} p'$ is a prefix of $\pi$ there exists $q'\in Q$ such that
+$q\goes{w} q'$ and
+$p'\fair q'$.  In fact, there exists a fair trace $\pi'$ starting from
+$q$ which matches $\pi$, so that there exists $q'\in Q$ such that
+$q\goes{w} q'$. Moreover, the suffix
+$\pi_{p'\rightarrow}$ is a fair trace matched by the fair trace $\pi'_{q'\rightarrow}$, so that $p' \fair q'$ holds. \qed
+\end{remark}
+
+\begin{remark}\label{remark:fair2}
+Let us also remark that for all $q\in Q$, if there is no fair
+trace starting from $q$, then for all $q'\in Q$, $q \fair q'$ holds,
+because, by forward completeness of $\mathcal{A}$,
+any infinite (but not fair) trace starting from $q$ can be matched by an
+infinite trace starting from any $q'\in Q$.
+\end{remark}
+
+\begin{proposition}[Right monotonicity]
+\label{prop:monotonicity4}
+Let $u,v,x \in \Sigma^*$.
+\[ u \wrfair{A} v \Longrightarrow ux \wrfair{A} vx \]
+\end{proposition}
+
+\begin{proof}
+Consider $i \in I, p,q \in Q$ such that $i \goes{u} p \goes{x} q$.
+Since $p \in post^{\mathcal{A}}_{u}(I)$ and $u \wrfair{A} v$,
+$\exists p' \in Q$
+such that $p' \in post_v^{\mathcal{A}}(I)$, $p \fair p'$.
+If $p \goes{x} q$ can be prolonged to a
+fair trace $\pi_0$ then, by Remark~\ref{remark:fair}, there exists
+$q' \in Q$ such that $p' \goes{x} q'$ and $q \fair q'$ holds.
+If $p \goes{x} q$ cannot be prolonged to a
+fair trace,
+by forward completeness of $\mathcal{A}$, the finite trace
+$p \goes{x} q$ can still be matched so that there exists
+$q' \in Q$ such that $p' \goes{x} q'$.
+Moreover, since there exists no fair trace starting from $q$, otherwise
+$p \goes{x} q$ could be prolonged to a
+fair trace, by Remark~\ref{remark:fair2}, it turns out that $q \fair q'$.
+\end{proof}
+
+\begin{example}
+Let $\mathcal{A}$ be automaton in Figure~\ref{fig:wrfair-not-left-monotonic}.
+Observe that $u \wrfair{A} v$, because $post_{u}^{\mathcal{A}}(I) = \{q_1\}$,
+$q_1 \fair q_4$ and $q_4 \in post_{v}^{\mathcal{A}}(I)$.
+Consider now $post_{wu}^{\mathcal{A}}(I) = \{q_9\}$: since
+$post_{wv}^{\mathcal{A}}(I) = \{q_{12}\}$, $\nexists q \in post_{wv}^{\mathcal{A}}(I)$
+such that $q_8 \fair q$.
+This is due to the fact that from $q_9$ starts one fair trance, while from
+$q_{12}$ starts an \emph{infinite} but not \emph{fair} trace.
+This implies that $u \wrfair{A} v \centernot\implies wu \wrfair{A} wv$, so that
+$\wrfair{A}$ \emph{is not a left-monotonic quasiorder}.
+\end{example}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+
+   \node[state,initial] (q_0)   {$q_0$};
+   \node[state] (q_4) [above right = of q_0, yshift=-0.5cm] {$q_4$};
+   \node[state] (q_8) [below right = of q_0, yshift=0.5cm] {$q_8$};
+   \node[state] (q_1) [above = of q_4] {$q_1$};
+   \node[state] (q_{11}) [below = of q_8] {$q_{11}$};
+   \node[state] (q_2) [right = of q_1] {$q_2$};
+   \node[state,accepting] (q_3) [right = of q_2] {$q_3$};
+   \node[state] (q_5) [right = of q_4] {$q_5$};
+   \node[state] (q_6) [right = of q_5] {$q_6$};
+   \node[state,accepting] (q_7) [right = of q_6] {$q_7$};
+   \node[state] (q_9) [right = of q_8] {$q_9$};
+   \node[state,accepting] (q_{10}) [right = of q_9] {$q_{10}$};
+   \node[state] (q_{12}) [right = of q_{11}] {$q_{12}$};
+   \node[state] (q_{13}) [right = of q_{12}] {$q_{13}$};
+
+   \path[->]
+       (q_0) edge  node {u}   (q_1)
+       (q_0) edge [above] node {v}   (q_4)
+       (q_0) edge node {w}   (q_8)
+       (q_0) edge [below left] node {w}   (q_{11})
+       (q_1) edge node {a}   (q_2)
+       (q_2) edge node {b}   (q_3)
+       (q_3) edge [loop above] node {c}   (q_3)
+       (q_4) edge node {a}   (q_5)
+       (q_5) edge node {b}   (q_6)
+       (q_6) edge node {c}   (q_7)
+       (q_7) edge [loop above] node {c}   (q_7)
+       (q_8) edge node {u}   (q_9)
+       (q_9) edge node {a}   (q_{10})
+       (q_{10}) edge [loop above] node {b}   (q_{10})
+       (q_{11}) edge node {v}   (q_{12})
+       (q_{12}) edge node {a}   (q_{13})
+       (q_{13}) edge [loop above] node {b}   (q_{13})
+   ;
+\end{tikzpicture}
+\caption{Automaton that shows that $\wrfair{A}$ is not left-monotonic}
+\label{fig:wrfair-not-left-monotonic}
+\end{figure}
+
+\begin{proposition}
+\label{prop:wrdel-smaller-wrfair}
+\[ \mathord{\wrdel{A}} \subseteq \mathord{\wrfair{A}} \]
+\end{proposition}
+
+\begin{proof}
+Let $u,v \in \Sigma^*$ such that $u\wrdel{A}v$.
+Since $\forall p \in post_u^{\mathcal{A}}(I), \exists q \in post_v^{\mathcal{A}}(I)$
+such that $p \del q$, then it also holds that $p \fair q$.
+This is due to the fact that $\mathord{\del} \subseteq \mathord{\fair}$
+(see Section~\ref{sec:simulation}).
+\end{proof}
+
+\subsection{Other simulation-based quasiorders on $\Sigma^*$}
+\label{sec:other-qos}
+
+We define here two families of qos on words that
+are not suitable for being used in Algorithm~\refOmegaInc{} to check the language
+inclusion, since it turns out that they are not right-monotonic qos.
+The first relies on the $k$\emph{-lookahead simulation}, while the second on
+\emph{trace inclusions}.
+
+\begin{definition}
+Let $u,v \in \Sigma^*$, $x \in \{di,de,f\}$ and $k \geq 1$.
+\begin{equation*}
+\begin{split}
+u \pwskl{A}{k}{x} v \overset{\triangle}{\Longleftrightarrow}
+& \; \forall (q_1, q_2) \in ctx_{\mathcal{A}}(u) \;\exists (q_3,q_4) \in ctx_{\mathcal{A}}(v) \; \textrm{\emph{such that}}\: \\
+& \; \;  q_1 \bwdir q_3 \; \wedge \; q_2 \ptkl{k}{x} q_4
+\end{split}
+\end{equation*}
+\end{definition}
+
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2.5cm,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+  \node[state,initial]   (q_0)                      {$q_0$};
+  \node[state] (q_1) [below left of=q_0, xshift=-1.5cm]  {$q_1$};
+  \node[state] (q_2) [below of=q_1]  {$q_2$};
+  \node[state] (q_3) [below of=q_2]  {$q_3$};
+  \node[state] (q_4) [below left of=q_3]  {$q_4$};
+  \node[state] (q_5) [below right of=q_3]  {$q_5$};
+  \node[state] (q_6) [below right of=q_0, xshift=1.5cm]  {$q_6$};
+  \node[state] (q_7) [below of=q_6]  {$q_7$};
+  \node[state] (q_8) [below left of=q_7]  {$q_8$};
+  \node[state] (q_9) [below right of=q_7]  {$q_9$};
+  \node[state] (q_10) [below of=q_8]  {$q_{10}$};
+  \node[state] (q_11) [below of=q_9]  {$q_{11}$};
+
+  \path[->]
+  (q_0) edge [below right]  node {$a$} (q_1)
+  (q_0) edge [below left] node {$a$} (q_6)
+  (q_1) edge node {$u$} (q_2)
+  (q_2) edge node {$w_1$} (q_3)
+  (q_3) edge [above left] node {$w_2$} (q_4)
+  (q_3) edge node {$w_3$} (q_5)
+  (q_6) edge node {$v$}   (q_7)
+  (q_7) edge [above left] node {$w_1$} (q_8)
+  (q_7) edge node {$w_1$} (q_9)
+  (q_8) edge node {$w_2$} (q_10)
+  (q_9) edge node {$w_3$} (q_11)
+  ;
+\end{tikzpicture}
+\caption{Example of use of $\pwskl{A}{k}{x}$ and $\pwst{A}{x}$}
+\label{fig:example-pwskl}
+\end{figure}
+
+\begin{example}
+\label{example:k-lookahead-words-not-right-monotonic}
+Let $\mathcal{A}$ be the automaton in Figure~\ref{fig:example-pwskl}.
+Consider $k=2$: $q_2 \ptkl{2}{x} q_7$.
+This is due to the fact that if Spoiler plays $q_2 \trans{w_1} q_3 \trans{w_2} q_4$
+Duplicator can play $q_7 \trans{w_1} q_8 \trans{w_2} q_{10}$.
+Similarly, if Spoiler plays $q_2 \trans{w_1} q_3 \trans{w_3} q_5$,
+Duplicator can answer $q_7 \trans{w_1} q_9 \trans{w_3} q_{11}$.
+It is obvious that $q_4 \ptkl{2}{x} q_{10}$ and $q_5 \ptkl{2}{x} q_{11}$.
+Observe that $ctx_{\mathcal{A}}(u) = \{(q_1,q_2)\}$ and $ctx_{\mathcal{A}}(v) = \{(q_6,q_7)\}$.
+Since $q_2 \ptkl{2}{x} q_7$ and $q_1 \bwdir q_6$, $\forall (p_1,p_2) \in ctx_{\mathcal{A}}(u)$
+$\exists (p_3,p_4) \in ctx_{\mathcal{A}}(v)$
+such that $p_1 \bwdir p_3 \; \wedge \; p_2 \ptkl{2}{x} p_4$,
+and then $u \pwskl{A}{2}{x} v$.
+
+Consider now $uw_1$ and $vw_1$.
+Observe that $ctx_{\mathcal{A}}(uw_1) = \{(q_1,q_3)\}$ and
+$ctx_{\mathcal{A}}(vw_1) = \{(q_6,q_8),(q_6,q_9)\}$.
+Due to the fact that $q_8 \ntrans{w_3}$ and $q_9 \ntrans{w_2}$,
+$q_3 \ptkl{2}{x} q_8$ and $q_3 \ptkl{2}{x} q_9$ don't hold.
+This implies that also $uw_1 \pwskl{A}{2}{x} vw_1$ doesn't hold.
+We showed that $\exists u,v,w_1 \in \Sigma^*$ such that
+$u \pwskl{A}{2}{x} v \centernot\implies uw_1 \pwskl{A}{2}{x} vw_1$,
+so that $\pwskl{A}{k}{x}$ \emph{is not right-monotonic}.
+This implies that for our purposes $\pwskl{A}{k}{x}$ is not interesting.
+\end{example}
+
+
+\begin{definition}
+Let $u,v \in \Sigma^*$ and $x \in \{di,de,f\}$.
+\begin{equation*}
+\begin{split}
+u \pwst{A}{x} v \overset{\triangle}{\Longleftrightarrow}
+& \; \forall (q_1, q_2) \in ctx_{\mathcal{A}}(u) \;\exists (q_3,q_4) \in ctx_{\mathcal{A}}(v) \; \textrm{\emph{such that}}\: \\
+& \; \;  q_1 \bwdir q_3 \; \wedge \; q_2 \pt{x} q_4
+\end{split}
+\end{equation*}
+\end{definition}
+
+\begin{example}
+Let $\mathcal{A}$ be the automaton in Figure~\ref{fig:example-pwskl}.
+Observe that $q_2 \pt{x} q_7$.
+This is due to the fact that no matter what Spoiler plays from $q_2$,
+Duplicator will always be able to match that play.
+If Spoiler plays $q_2 \trans{w_1} q_3 \trans{w_2} q_4$
+Duplicator can play $q_7 \trans{w_1} q_8 \trans{w_2} q_{10}$.
+Similarly, if Spoiler plays $q_2 \trans{w_1} q_3 \trans{w_3} q_5$,
+Duplicator can answer $q_7 \trans{w_1} q_9 \trans{w_3} q_{11}$.
+Observe that $ctx_{\mathcal{A}}(u) = \{(q_1,q_2)\}$ and $ctx_{\mathcal{A}}(v) = \{(q_6,q_7)\}$.
+Since $q_2 \pt{x} q_7$ and $q_1 \bwdir q_6$, $\forall (p_1,p_2) \in ctx_{\mathcal{A}}(u)$
+$\exists (p_3,p_4) \in ctx_{\mathcal{A}}(v)$
+such that $p_1 \bwdir p_3 \; \wedge \; p_2 \pt{x} p_4$,
+and then $u \pwst{A}{x} v$.
+
+Observe that $q_3 \pt{x} q_8$ and $q_3 \pt{x} q_9$ don't hold
+due to the fact that $q_8 \ntrans{w_3}$ and $q_9 \ntrans{w_2}$.
+This implies that also $uw_1 \pwst{A}{x} vw_1$ doesn't hold.
+We showed that $\exists u,v,w_1 \in \Sigma^*$ such that
+$u \pwst{A}{x} v \centernot\implies uw_1 \pwst{A}{x} vw_1$,
+so that $\pwst{A}{k}{x}$ \emph{is not right-monotonic}.
+This implies that for our purposes $\pwst{A}{k}{x}$ is not interesting.
+\end{example}
+
+
+\section{Using simulation-based quasiorders to solve the language inclusion problem}
+\label{sec:using-qos}
+
+In this section we show how to to use the simulation-based quasiorders to solve
+the language inclusion problem.
+In particular, in Section~\ref{sec:simulations-for-buchi} we show which pairs
+of qos can be used in Algorithm~\refOmegaInc{} for checking the inclusion
+between the languages of two \Buchi{} automata, while in Section~\ref{sec:simulations-for-cfg}
+we point out that~\refGrammar{} can be instantiated with $\wsdir{A}$
+to solve the language inclusion problem between CFGs and FAs.
+
+
+\subsection{Languages recognized by \Buchi{}  automata}
+\label{sec:simulations-for-buchi}
+
+We remark that the algorithm that decides the language inclusion between
+two $\omega$-regular languages is parametrized by two qos $\leq_1,\leq_2$
+that must be:
+\begin{enumerate}
+\item computable well-quasiorders;
+\item right-monotonic;
+\item such that $\rho_{\leq_1 \times \leq_2}(I_{L_2}) = I_{L_2}$.
+\end{enumerate}
+We observe that the quasiorders defined in Section~\ref{sec:new-qos} meet the first two
+requirements.
+We remark that Proposition~\ref{prop:rho-iff-stomega-in-lang} offers an alternative
+characterization of the third one.
+Observe that in order to show that $\forall u,s \in \Sigma^*, v,t \in \Sigma^+$
+such that $uv ^{\omega} \in L_2$, $u \leq_1 s$ and $v \leq_2 t$,
+it holds that $st ^{\omega} \in L_2$, we can proceed as follows:
+\begin{enumerate}
+\item We prove $\forall u,s \in \Sigma^*, v \in \Sigma^+$, if $uv ^{\omega} \in L_2$ and $u \leq_1 s$, then $sv ^{\omega} \in L_2$;
+\item We prove $\forall u \in \Sigma^*, v,t \in \Sigma^+$, if $uv ^{\omega} \in L_2$ and $v \leq_2 t$, then $ut ^{\omega} \in L_2$.
+\end{enumerate}
+And then $st ^{\omega} \in L_2$ immediately follows.
+This is exactly what we show: first we prove that $1$ holds for $\wsdir{A}$,
+$\wrdir{A}$, $\wrdel{A}$ and $\wrfair{A}$;
+then, we show that $2$ holds for $\wsdirf{A}$.
+This implies that the pairs $(\wsdir{A}, \wsdirf{A})$, $(\wrdir{A}, \wsdirf{A})$,
+$(\wrdel{A}, \wsdirf{A})$ and $(\wrfair{A}, \wsdirf{A})$ can be used in
+Algorithm~\refOmegaInc{} to solve the language inclusion problem between
+$\omega$-regular languages.
+
+\begin{proposition}
+\label{proposition:wsdir-substitution}
+Let $\mathcal{B}$ be a BA, $u,s \in \Sigma^*, v \in \Sigma^+$
+such that $uv ^{\omega} \in \lang{B}$ and $u \wsdir{B} s$.
+Then, $sv ^{\omega} \in \lang{B}$.
+\end{proposition}
+
+\begin{proof}
+If $uv ^{\omega} \in \lang{B}$, then $\exists i \in I, p,q \in Q$ such that
+$i \goes{u} p \goes{v^n} q \goesf{v^m} q$ for $n \geq 0, m \geq 1$.
+Since $(i,p) \in \ctx{B}{u}$, by $u \wsdir{B} s$, $\exists (i',p') \in \ctx{B}{s}$
+such that $i \revdir i'$ and $p \dir p'$.
+Since $i \in I$ and $i \revdir i'$, then $i' \in I$.
+Furthermore, since from $p$ starts one fair trace that matches the infinite word $v^{\omega}$,
+by $p \dir p'$, also from $p'$ starts one fair trace that matches the same infinite word.
+We recall that one trace is fair if $q_f \in F$ is present in the trace infinitely
+many times.
+This implies that $sv ^{\omega} \in \lang{B}$.
+\end{proof}
+
+\begin{proposition}
+\label{proposition:wrdir-substitution}
+Let $\mathcal{B}$ be a BA, $u,s \in \Sigma^*, v \in \Sigma^+$
+such that $uv ^{\omega} \in \lang{B}$ and $u \wrdir{B} s$.
+Then, $sv ^{\omega} \in \lang{B}$.
+\end{proposition}
+
+\begin{proof}
+Since $uv ^{\omega} \in \lang{B}$, $\exists i \in I, p,q \in Q$ such that
+$i \goes{u} p \goes{v^n} q \goesf{v^m} q$ for some $n \geq 0,m \geq 1$.
+By $u \wrdir{B} s$, $\exists i' \in I, p' \in Q$ such that $i' \goes{s} p'$
+and $p \dir p'$.
+We observe that from $p$ starts a fair trace
+$\pi_0 = p \trans{a_1} p_1 \trans{a_2} \cdots \trans{a_n} p_n \trans{a_1} p_{n+1} \trans{a_2} p_{n+2} \cdots$
+where $a_1 \dots a_n = v$.
+For this reason and by $p \dir p'$, also from $p'$ starts a fair trace
+$\pi_1 = p' \trans{a_1} p_1' \trans{a_2} \cdots \trans{a_n} p_n' \trans{a_1} p_{n+1}' \trans{a_2} p_{n+2}' \cdots$,
+and then $sv ^{\omega} \in \lang{B}$.
+\end{proof}
+
+\begin{proposition}
+\label{proposition:wrdel-substitution}
+Let $\mathcal{B}$ be a BA, $u,s \in \Sigma^*, v \in \Sigma^+$
+such that $uv ^{\omega} \in \lang{B}$ and $u \wrdel{B} s$.
+Then, $sv ^{\omega} \in \lang{B}$.
+\end{proposition}
+
+\begin{proof}
+Since $uv ^{\omega} \in \lang{B}$, $\exists i \in I, p,q \in Q$ such that
+$i \goes{u} p \goes{v^n} q \goesf{v^m} q$ for some $n \geq 0,m \geq 1$.
+By $u \wrdel{B} s$, $\exists i' \in I, p' \in Q$ such that $i' \goes{s} p'$
+and $p \del p'$.
+We observe that from $p$ starts a fair trace
+$\pi_0 = p \trans{a_1} p_1 \trans{a_2} \cdots \trans{a_n} p_n \trans{a_1} p_{n+1} \trans{a_2} p_{n+2} \cdots$
+where $a_1 \dots a_n = v$.
+For this reason and by $p \del p'$, also from $p'$ starts a fair trace
+$\pi_1 = p' \trans{a_1} p_1' \trans{a_2} \cdots \trans{a_n} p_n' \trans{a_1} p_{n+1}' \trans{a_2} p_{n+2}' \cdots$,
+and then $sv ^{\omega} \in \lang{B}$.
+\end{proof}
+
+\begin{proposition}
+\label{proposition:wrfair-substitution}
+Let $\mathcal{B}$ be a BA, $u,s \in \Sigma^*, v \in \Sigma^+$
+such that $uv ^{\omega} \in \lang{B}$ and $u \wrfair{B} s$.
+Then, $sv ^{\omega} \in \lang{B}$.
+\end{proposition}
+
+\begin{proof}
+Since $uv ^{\omega} \in \lang{B}$, $\exists i \in I, p,q \in Q$ such that
+$i \goes{u} p \goes{v^n} q \goesf{v^m} q$ for some $n \geq 0,m \geq 1$.
+By $u \wrfair{B} s$, $\exists i' \in I, p' \in Q$ such that $i' \goes{s} p'$
+and $p \fair p'$.
+We observe that from $p$ starts a fair trace
+$\pi_0 = p \trans{a_1} p_1 \trans{a_2} \cdots \trans{a_n} p_n \trans{a_1} p_{n+1} \trans{a_2} p_{n+2} \cdots$
+where $a_1 \dots a_n = v$.
+For this reason and by $p \fair p'$, also from $p'$ starts a fair trace
+$\pi_1 = p' \trans{a_1} p_1' \trans{a_2} \cdots \trans{a_n} p_n' \trans{a_1} p_{n+1}' \trans{a_2} p_{n+2}' \cdots$,
+and then $sv ^{\omega} \in \lang{B}$.
+\end{proof}
+
+In order to prove that $\forall u \in \Sigma^*, v,t \in \Sigma^+$ such that
+$uv ^{\omega} \in \lang{B}$ and $v \wsdirf{B} t$, it holds that $ut ^{\omega} \in \lang{B}$,
+we need two preliminary results.
+
+\begin{lemma}
+\label{lemma:substitution}
+Let $\mathcal{A}$ be an automaton.
+Let $u,v,w \in \Sigma^*$ such that $u \wsdirf{A} v$, $i \in I, p,q \in Q$, such that
+$i \goes{w} p \goes{u^n} q$ for $n \geq 1$.
+Then $\forall n',n'': n'+n'' = n, n',n'' \geq 0, \exists i' \in I, p_1', p_2', q' \in Q$ such that
+$i' \goes{w} p_1' \goes{v^{n'}} p_2' \goes{u^{n''}} q' \; \wedge \; p \bwdir p_1' \; \wedge \; q \dir q'$.
+\end{lemma}
+
+\begin{proof}
+It follows from one induction on $n'$.
+If $n'=0$, then $n''=n$.
+We observe that $i \goes{w} p \goes{\epsilon} p \goes{u^{n''}} q$,
+and since $\bwdir$ and $\dir$ are reflexive the thesis holds.
+If $0 < n' \leq n$, by induction hypothesis $\exists i'' \in I, p_1'', p_2'', p_3'', q'' \in Q$ such that
+$i'' \goes{w} p_1'' \goes{v^{n'-1}} p_2'' \goes{u} p_3'' \goes{u^{n''}} q'' \; \wedge \; p \bwdir p_1'' \; \wedge \; q \dir q''$.
+Since $(p_2'', p_3'') \in ctx_{\mathcal{A}}(u)$ and $u \wsdirf{A} v$, $\exists (p_2',p_3') \in ctx_{\mathcal{A}}(v)$ such that
+$p_2'' \bwdir p_2' \; \wedge \; p_3'' \dir p_3'$.
+$p_2'' \bwdir p_2'$ implies that $\exists i' \in I, p_1', \in Q$ such that
+$i' \goes{w} p_1' \goes{v^{n'-1}} p_2'$ and $p_1'' \bwdir p_1'$.
+Furthermore $p_3'' \goes{u^{n''}} q''$ implies that $\exists q' \in Q, p_3' \goes{u^{n''}} q'$ and $q'' \dir q'$.
+We conclude observing that by transitivity $p \bwdir p_1'$ and $q \dir q'$.
+\end{proof}
+
+\begin{lemma}
+\label{lemma:substf}
+Let $\mathcal{A}$ be an automaton.
+Let $u,v,w \in \Sigma^*$ such that $u \wsdirf{A} v$, $i \in I, p_1,p_2,q \in Q$.
+If $i \goes{w} p_1 \goesf{u} p_2 \goes{u^n} q$,
+then $\exists i' \in I, p_1',p_2',q' \in Q$ such that
+$i' \goes{w} p_1' \goesf{v} p_2' \goes{v^n} q' \; \wedge \; p_1 \bwdir p_1' \; \wedge \; q \dir q'$.
+\end{lemma}
+
+\begin{proof}
+By $u \wsdirf{A} v$, from $p_1 \goesf{u} p_2$ we obtain that $\exists (p_1'', p_2'') \in ctx_{\mathcal{A}}(v)$ such that
+$p_1 \bwdir p_1'' \; \wedge \; p_2 \dir p_2'' \; \wedge \; p_1'' \goesf{v} p_2''$.
+Since $i \goes{w} p_1$ and  $p_2 \goes{u^n} q$ this implies that $\exists i'' \in I, q'' \in Q$ such that $i'' \goes{w} p_1''
+\goesf{v} p_2'' \goes{u^n} q'' \; \wedge \; q \dir q''$.
+By Lemma~\ref{lemma:substitution} $\exists i_1' \in I, p_2', q' \in Q$ such that
+$i_1' \goes{wv} p_2' \goes{v^n} q' \; \wedge \; p_2'' \bwdir p_2' \; \wedge \; q'' \dir q'$.
+$p_2'' \bwdir p_2'$ and $p_2'' \goesrf{v^R} p_1''$ imply that $\exists p_1' \in Q$,
+$p_2' \goesrf{v^R} p_1'$.
+By definition of backward simulation, $p_1'' \bwdir p_1''$ so that
+$\exists i_2' \in I$ such that $i_2' \goes{w} p_1' \goesf{v} p_2' \goes{v^n} q'$.
+We conclude by observing that, by transitivity, $p_1 \bwdir p_1' \; \wedge \; p_2 \dir p_2'$.
+\end{proof}
+
+\begin{proposition}
+\label{proposition:wsdirf-substitution}
+Let $\mathcal{B}$ be a BA, $u, \in \Sigma^*, v,t \in \Sigma^+$
+such that $uv ^{\omega} \in \lang{B}$ and $v \wsdirf{B} t$.
+Then, $ut ^{\omega} \in \lang{B}$.
+\end{proposition}
+
+\begin{proof}
+The idea is to show that we can keep substituting pairs of states in $ctx_{\mathcal{B}}(v)$
+with pairs in $ctx_{\mathcal{B}}(t)$. It turns out that if we do this enough times, by the \emph{pigeonhole principle}
+we find a loop.
+Since, $uv^{\omega} \in \lang{B}$ holds,
+$ \exists i \in I, p,q_0 \in Q$ such that $i \goes{u} p \goes{v^n} q_0 \goesf{v^m} q_0$ for some $n,m \geq 1$
+Then $\exists \pi = q_0 \trans{a_0} q_1 \trans{a_1} \cdots \trans{a_{\hat{n}}} q_0$ where $a_0a_1 \dots a_{\hat{n}} = v^m$.
+At least one of the states in $\pi$ is final, say $q_i$ with $i \in [0..\hat{n}]$.
+Let $j,k$ such that $q_j \goesf{x} q_i \goesf{y} q_k$, where $xy=v$.
+Observe that $(q_j,q_k) \in ctx^F_{\mathcal{B}}(v)$.
+Let $m'$ be the least value such that $q_0 \goes{v^{m'}} q_j$.
+It holds that $i \goes{u} p \goes{v^{n}v^{m'}} q_j \goesf{v} q_k$.
+By Lemma~\ref{lemma:substitution} and since $v \wsdirf{B} t$,
+$\exists i' \in I, p', q'_0 \in Q$ such that
+$i' \goes{u} p' \goes{t^nt^{m'}} q_0' \; \wedge \; q_j \dir q_0'$, and then
+$\exists \hat{q}_0'$ such that $q_0' \goesf{v} \hat{q}'_0 \; \wedge \; q_k \dir \hat{q}_0'$.
+% This implies that $\hat{q}_0'$ is able to follow $v$ infinitely many times, passing through one final state
+% \emph{at least} after following $v$ $m$ times.
+This implies that $\exists q_1', \hat{q}_1', q_2', \hat{q}_2', \dots, q_{|Q|+1}', \hat{q}_{|Q|+1}' \in Q$ such that:
+\[ i' \goes{u} p' \goes{t^n t^{m'}} q_0' \goesf{v} \hat{q}_0' \goes{v^{m-1}} q_1' \goesf{v} \hat{q}_1' \goes{v^{m-1}}
+\cdots \goes{v^{m-1}} q_{|Q|}' \goesf{v} \hat{q}_{|Q|}' \goes{v^{m-1}} q_{|Q|+1}' \goesf{v} \hat{q}_{|Q|+1}'\]
+and $q_k \dir \hat{q}_{|Q|+1}'$.
+Applying Lemma~\ref{lemma:substf} we observe that
+\sloppy $\exists  i'' \in I, q_0'', \hat{q}_0'', q_1'', \hat{q}_1'', \dots, q_{|Q|+1}'', \hat{q}_{|Q|+1}'' \in Q$
+such that:
+\[ i'' \goes{ut^n t^{m'}} q_0'' \goesf{t} \hat{q}_0'' \goes{t^{m-1}} q_1'' \goesf{v} \hat{q}_1'' \goes{v^{m-1}}
+\cdots \goes{v^{m-1}} q_{|Q|}'' \goesf{v} \hat{q}_{|Q|}'' \goes{v^{m-1}} q_{|Q|+1}'' \goesf{v} \hat{q}_{|Q|+1}'' \]
+and $q_k \dir \hat{q}_{|Q|+1}''$.
+Applying Lemma~\ref{lemma:substf} $|Q|$ more times, we observe that:
+$\exists  i''' \in I, q_0''', \hat{q}_0''', q_1''', \hat{q}_1''', \dots, q_{|Q|+1}''', \hat{q}_{|Q|+1}''' \in Q$ such that:
+\[ i''' \goes{ut^n t^{m'}} q_0''' \goesf{t} \hat{q}_0''' \goes{t^{m-1}} q_1''' \goesf{t} \hat{q}_1''' \goes{t^{m-1}}
+\cdots \goes{t^{m-1}} q_{|Q|}''' \goesf{t} \hat{q}_{|Q|}''' \goes{t^{m-1}} q_{|Q|+1}''' \goesf{v} \hat{q}_{|Q|+1}''' \]
+By the \emph{pingeonhole principle}, we can find $\hat{i},\hat{j} \in [0..|Q|]$ such that $\hat{i} < \hat{j} \; \wedge \; q_{\hat{i}}''' = q_{\hat{j}}'''$.
+Therefore, $\exists \hat{n}, \hat{m}, i''' \goes{ut^{\hat{n}}} q_{\hat{i}}''' \goesf{t^{\hat{m}}} q_{\hat{i}}'''$
+so that $ut^{\omega} \in \lang{B}$.
+\end{proof}
+
+The following list of propositions summarizes which pairs of simulation-based
+quasiorders meet the requirement $\rho_{\leq_1 \times \leq_2}(I_{L_2}) = I_{L_2}$.
+
+\begin{proposition}
+\label{prop:wsdir-wrdirf-ok}
+% Let $\mathcal{B}$ be a BA.
+% Let $uv^{\omega} \in \lang{B}$ and $u,s \in \Sigma^*, v,t \in \Sigma^+$
+% such that $u \wsdir{B} s$ and $v \wsdirf{B} t$.
+% Then, $st^{\omega} \in \lang{B}$.
+Let $\mathcal{B}$ be a BA.
+\[ \rho_{\wsdir{B} \times \wsdirf{B}}(I_{\lang{B}}) = I_{\lang{B}} \]
+\end{proposition}
+
+\begin{proof}
+It follows immediately from Proposition~\ref{prop:rho-iff-stomega-in-lang},
+Proposition~\ref{proposition:wsdir-substitution}
+and Proposition~\ref{proposition:wsdirf-substitution}.
+\end{proof}
+
+\begin{proposition}
+\label{prop:wrdir-wrdirf-ok}
+% Let $\mathcal{B}$ be a BA.
+% Let $uv^{\omega} \in \lang{B}$ and $u,s \in \Sigma^*, v,t \in \Sigma^+$
+% such that $u \wrdir{B} s$ and $v \wsdirf{B} t$.
+% Then, $st^{\omega} \in \lang{B}$.
+Let $\mathcal{B}$ be a BA.
+\[ \rho_{\wrdir{B} \times \wsdirf{B}}(I_{\lang{B}}) = I_{\lang{B}} \]
+\end{proposition}
+
+\begin{proof}
+It follows immediately from Proposition~\ref{prop:rho-iff-stomega-in-lang},
+Proposition~\ref{proposition:wrdir-substitution} and
+Proposition~\ref{proposition:wsdirf-substitution}.
+\end{proof}
+
+\begin{proposition}
+\label{prop:wrdel-wrdirf-ok}
+% Let $\mathcal{B}$ be a BA.
+% Let $uv^{\omega} \in \lang{B}$ and $u,s \in \Sigma^*, v,t \in \Sigma^+$
+% such that $u \wrdel{B} s$ and $v \wsdirf{B} t$.
+% Then, $st^{\omega} \in \lang{B}$.
+Let $\mathcal{B}$ be a BA.
+\[ \rho_{\wrdel{B} \times \wsdirf{B}}(I_{\lang{B}}) = I_{\lang{B}} \]
+\end{proposition}
+
+\begin{proof}
+It follows immediately from Proposition~\ref{prop:rho-iff-stomega-in-lang},
+Proposition~\ref{proposition:wrdel-substitution}
+and Proposition~\ref{proposition:wsdirf-substitution}.
+\end{proof}
+
+\begin{proposition}
+\label{prop:wrfair-wrdirf-ok}
+% Let $\mathcal{B}$ be a BA, $u,s \in \Sigma^*, v,t \in \Sigma^+$
+% such that $uv ^{\omega} \in \lang{B}$, $u \wrfair{B} s$ and $v \wsdirf{B} t$.
+% Then, $st ^{\omega} \in \lang{B}$.
+Let $\mathcal{B}$ be a BA.
+\[ \rho_{\wrfair{B} \times \wsdirf{B}}(I_{\lang{B}}) = I_{\lang{B}} \]
+\end{proposition}
+
+\begin{proof}
+It follows immediately from Proposition~\ref{prop:rho-iff-stomega-in-lang},
+Proposition~\ref{proposition:wrfair-substitution}
+and Proposition~\ref{proposition:wsdirf-substitution}.
+\end{proof}
+
+
+\subsection{Languages recognized by CFGs and FAs}
+\label{sec:simulations-for-cfg}
+
+In what follows, we show that $\wsdir{A}$ meets the requirements of
+the framework described in~\cite{ganty2019language}, and then can be used to
+instantiate Algorithm~\refGrammar{} to check le language inclusion
+between context-free and regular languages.
+
+\begin{proposition}
+\label{prop:intersection-ok}
+Let $\mathcal{A}$ be an FA.
+\[ \wsdir{A} \cap \; (\mathcal{L}(\mathcal{A}) \times \neg \mathcal{L}(\mathcal{A})) = \varnothing \]
+\end{proposition}
+
+\begin{proof}
+Let $u \in \mathcal{L}(\mathcal{A})$, then $\exists(q_1,q_2) \in ctx_{\mathcal{A}}(u)$ such that $q_1 \in I$ and $q_2 \in F$.
+Let $v \notin \mathcal{L}(\mathcal{A})$, then $\forall (q_3,q_4) \in ctx_{\mathcal{A}}(v)$, $ q_3 \notin I \; \vee q_4 \notin F$ holds.
+If $ q_3 \notin I $, since $ q_1 \in I$, then $q_1 \nrevdir q_3$.
+If $ q_4 \notin F $, since $ q_2 \in F $, then $q_2 \ndir q_4$.
+In both cases $u \wsdir{A} v$ does not hold.
+\end{proof}
+
+\begin{proposition}
+Let $\mathcal{A}$ be a FA.
+\[ \wsdir{A} \; \textrm{is a $\mathcal{L}(\mathcal{A})$-consistent decidable wqo.} \]
+\end{proposition}
+
+\begin{proof}
+We remark a quasiorder $\leq$ is $\lang{A}$-\emph{consistent} iff it is a computable
+right-monotonic wqo such that $ \leq \cap \; (\mathcal{L}(\mathcal{A}) \times \neg \mathcal{L}(\mathcal{A})) = \varnothing $.
+Then, thesis follows immediately from Proposition~\ref{prop:wsdir-wqo}, \ref{prop:wsdir-monotonicity}
+and \ref{prop:intersection-ok}
+\end{proof}
+
+We remark that the only requirement of Algorithm~\refGrammar{} for the quasiorder
+$\leq$ is to be $L_2$-consistent.
+Since for a FA $\mathcal{A}$, $\wsdir{A}$ is $\lang{A}$-consistent, it
+can be used to instantiate Algorithm~\refGrammar{} to check the language inclusion
+between context-free and regular languages.
+
+\section{Overview of the considered quasiorders}
+\label{sec:overview-qos}
+
+In this section we summarize the properties of the considered quasiorders
+for the~\cite{ganty2020omegalang}'s framework: the newly defined simulation-based qos,
+the state-based and the syntactic ones.
+We also discuss some of the relations between them.
+In what follows let $\mathcal{B}$ be a BA.
+We recall from Proposition~\ref{remark:wsdir-sub-wsdirf} that:
+\[ \mathord{\wsdirf{B}} \subseteq \mathord{\wsdir{B}} \]
+Furthermore, Proposition~\ref{proposition:wsdir-vs-wrdir} states that:
+\[ \mathord{\wsdir{B}} \subseteq \mathord{\wrdir{B}} \]
+We remark that Proposition~\ref{prop:wrdir-smaller-wrdel} states:
+\[ \mathord{\wrdir{B}} \subseteq \mathord{\wrdel{B}} \]
+Additionally, Proposition~\ref{prop:wrdel-smaller-wrfair} states:
+\[ \mathord{\wrdel{B}} \subseteq \mathord{\wrfair{B}} \]
+
+Table~\ref{table:wqos-monotonicity} summarizes the monotonicity properties
+of the considered quasiorders.
+Table~\ref{table:wqos-wqo} summarizes where the reader can find the proofs
+that the considered quasiorders are computable well-quasiorders.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ c | c | c | c  }
+    \textbf{Type} & \textbf{Quasiorder} & \textbf{Monotonicity} & \\
+    \hline
+    \hline
+    Simulation-based & $\wsdir{B}$  & Monotonic & Proposition~\ref{prop:wsdir-monotonicity} \\
+    & $\wsdirf{B}$  & Monotonic & Proposition~\ref{proposition:monotonicity2}\\
+    & $\wrdir{B}$  & Right-monotonic & \cite{ganty2019language}\\
+    & $\wrdel{B}$  & Right-monotonic & Proposition~\ref{prop:monotonicity3}\\
+    & $\wrfair{B}$  & Right-monotonic & Proposition~\ref{prop:monotonicity4}\\
+    \hline
+    State-based & $\leq_{\mathcal{B}}^1$ & Monotonic & \cite{ganty2020omegalang} \\
+    & $\leq_{\mathcal{B}}^2$ & Monotonic & \cite{ganty2020omegalang} \\
+    & $\leq_{\mathcal{B}}^r$ & Right-monotonic & \cite{ganty2020omegalang} \\
+    \hline
+    Syntactic & $\leq_{\lang{B}}^1$ & Monotonic & \cite{ganty2020omegalang} \\
+    & $\leq_{\lang{B}}^2$ & Monotonic & \cite{ganty2020omegalang} \\
+    & $\leq_{\lang{B}}^r$ & Right-monotonic & \cite{ganty2020omegalang} \\
+    \end{tabular}
+\caption{Monotonicity properties of the considered qos}
+\label{table:wqos-monotonicity}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ c | c | c  }
+    \textbf{Type} & \textbf{Quasiorder} & \textbf{Proof of being a computable well-quasiorder}  \\
+    \hline
+    \hline
+    Simulation-based & $\wsdir{B}$  &  Proposition~\ref{prop:wsdir-wqo} \\
+    & $\wsdirf{B}$  & Proposition~\ref{prop:wsdirf-wqo}\\
+    & $\wrdir{B}$  &  \cite{ganty2019language}\\
+    & $\wrdel{B}$  &  Proposition~\ref{prop:wrdel-wqo}\\
+    & $\wrfair{B}$  & Proposition~\ref{prop:wrfair-wqo}\\
+    \hline
+    State-based & $\leq_{\mathcal{B}}^1$ &  \cite{ganty2020omegalang} \\
+    & $\leq_{\mathcal{B}}^2$ &  \cite{ganty2020omegalang} \\
+    & $\leq_{\mathcal{B}}^r$ &  \cite{ganty2020omegalang} \\
+    \hline
+    Syntactic & $\leq_{\lang{B}}^1$ &  \cite{ganty2020omegalang} \\
+    & $\leq_{\lang{B}}^2$ & \cite{ganty2020omegalang} \\
+    & $\leq_{\lang{B}}^r$ & \cite{ganty2020omegalang} \\
+\end{tabular}
+\caption{Proofs of being a computable well-quasiorder for the considered qos}
+\label{table:wqos-wqo}
+\end{table}
+
+We recall that two qos $\leq_1,\leq_2$, in order to be used in the
+framework for checking the language inclusion between $\omega$-regular languages,
+must meet the following requirements:
+\begin{enumerate}
+\item $\leq_1$ and $\leq_2$ must be computable well-quasiorders;
+\item $\leq_1$ and $\leq_2$ must be right-monotonic;
+\item It must hold that $\rho_{\leq_1 \times \leq_2}(I_{L_2}) = I_{L_2}$.
+\end{enumerate}
+While Table~\ref{table:wqos-monotonicity} and Table~\ref{table:wqos-wqo} show that
+the considered quasiorders meet the first two requirements,
+Table~\ref{table:framework-wqos} summarizes which pairs of qos
+meet the last one.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ c | c | c | c }
+    \textbf{Type} & $\leq_1$ & $\leq_2$ &  \\
+    \hline
+    \hline
+    Simulation-based & $\wsdir{B}$ & $\wsdirf{B}$ & Proposition~\ref{prop:wsdir-wrdirf-ok} \\
+    &$\wrdir{B}$ & $\wsdirf{B}$ & Proposition~\ref{prop:wrdir-wrdirf-ok} \\
+    &$\wrdel{B}$ & $\wsdirf{B}$ & Proposition~\ref{prop:wrdel-wrdirf-ok} \\
+    &$\wrfair{B}$ &  $\wsdirf{B}$ & Proposition~\ref{prop:wrfair-wrdirf-ok} \\
+    \hline
+    State-based & $\leq_{\mathcal{B}}^1$ &  ${\leq_{\mathcal{B}}^2}$ & \cite{ganty2020omegalang} \\
+    &$\leq_{\mathcal{B}}^r$ &  ${\leq_{\mathcal{B}}^2}$ & \cite{ganty2020omegalang} \\
+    \hline
+    Syntactic & $\leq_{\lang{B}}^1$ &  ${\leq_{\lang{B}}^2}$ & \cite{ganty2020omegalang} \\
+    &$\leq_{\lang{B}}^r$ &  ${\leq_{\lang{B}}^2}$ & \cite{ganty2020omegalang} \\
+\end{tabular}
+\caption{Pairs of quasiorders that meet the requirement $\rho_{\leq_1 \times \leq_2}(I_{L_2}) = I_{L_2}$}
+\label{table:framework-wqos}
+\end{table}
+
+We now discuss the relations between the simulation-based and the
+state-based qos.
+Observe that $\mathord{\leq^2_{\mathcal{B}}} \subseteq \mathord{\leq^1_{\mathcal{B}}} \subseteq \mathord{\leq^r_{\mathcal{B}}}$~\cite{ganty2020omegalang}.
+Since $\forall u,v \in \Sigma^*$, if $\ctx{B}{u} \subseteq \ctx{B}{v}$, then
+$\forall (q_1,q_2) \in \ctx{B}{u}$ $\exists (q_3,q_4) \in \ctx{B}{v}$
+such that $q_1 \revdir q_3$ and $q_2 \dir q_4$, because $\revdir$ and $\dir$
+are reflexive.
+This implies:
+\[ \mathord{\leq^1_{\mathcal{B}}} \subseteq \mathord{\wsdir{B}}\]
+Similarly, $\forall u,v \in \Sigma^*$,
+if $\ctx{B}{u} \subseteq \ctx{B}{v}$ and $\ctxf{B}{u} \subseteq \ctxf{B}{v}$ then
+$\forall (q_1,q_2) \in \ctx{B}{u}$ $\exists (q_3,q_4) \in \ctx{B}{v}$
+such that $q_1 \bwdir q_3$ and $q_2 \dir q_4$ again
+because $\bwdir$ and $\dir$ are reflexive.
+Furthermore, $q_1 \goesf{u} q_2$ implies $(q_1,q_2) \in \ctxf{B}{u}$,
+so that $(q_3,q_4) \in \ctxf{B}{v}$.
+This implies:
+\[ \mathord{\leq^2_{\mathcal{B}}} \subseteq \mathord{\wsdirf{B}}\]
+Lastly, $\forall u,v \in \Sigma^*$, if $\posti{u}{B} \subseteq \posti{v}{B}$
+we observe that $\forall p \in \posti{u}{B}, \exists q \in \posti{v}{B}$
+such that $p \dir q$ again by reflexivity of $\dir$,
+so that:
+\[ \mathord{\leq^r_{\mathcal{B}}} \subseteq \mathord{\wrdir{B}} \]
+For analogous arguments it holds that
+$\mathord{\leq^r_{\mathcal{B}}} \subseteq \mathord{\wrdel{B}}$ and
+$\mathord{\leq^r_{\mathcal{B}}} \subseteq \mathord{\wrfair{B}}$.
+
+We now discuss the relations between the simulation-based qos and the
+syntactic qos.
+Observe that $\mathord{\leq^2_{\lang{B}}} \subseteq \mathord{\leq^1_{\lang{B}}} \subseteq \mathord{\leq^r_{\lang{B}}}$~\cite{ganty2020omegalang}.
+First, Table~\ref{table:coverage} summarizes the fact that all the proposed
+pairs of simulation-based qos \emph{cover} the language of a BA.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ c | c | c }
+$\leq_1$ & $\leq_2$ & \textbf{Coverage of $\lang{B}$} \\
+\hline
+\hline
+$\wsdir{B}$ & $\wsdirf{B}$   & Proposition~\ref{prop:forall-stronger-coverage}, Proposition~\ref{proposition:wsdir-substitution}  and Proposition~\ref{proposition:wsdirf-substitution} \\
+$\wrdir{B}$ & $\wsdirf{B}$   & Proposition~\ref{prop:forall-stronger-coverage}, Proposition~\ref{proposition:wrdir-substitution}  and Proposition~\ref{proposition:wsdirf-substitution} \\
+$\wrdel{B}$ & $\wsdirf{B}$   & Proposition~\ref{prop:forall-stronger-coverage}, Proposition~\ref{proposition:wrdel-substitution}  and Proposition~\ref{proposition:wsdirf-substitution} \\
+$\wrfair{B}$ &  $\wsdirf{B}$ & Proposition~\ref{prop:forall-stronger-coverage}, Proposition~\ref{proposition:wrfair-substitution} and Proposition~\ref{proposition:wsdirf-substitution} \\
+\end{tabular}
+\caption{Coverage properties of the pairs of simulation-based qos}
+\label{table:coverage}
+\end{table}
+
+By the monotonicity properties of the simulation-based qos,
+their relations and the fact that they cover the language of a BA,
+by Proposition~\ref{proposition:synt-largest}, we can infer the
+following relations:
+\[ \mathord{\wsdir{B}} \subseteq \mathord{\leq^1_{\lang{B}}} \]
+\[ \mathord{\wsdirf{B}} \subseteq \mathord{\leq^2_{\lang{B}}} \]
+\[ \mathord{\wrdir{B}} \subseteq \mathord{\leq^r_{\lang{B}}} \]
+\[ \mathord{\wrdel{B}} \subseteq \mathord{\leq^r_{\lang{B}}} \]
+\[ \mathord{\wrfair{B}} \subseteq \mathord{\leq^r_{\lang{B}}} \]
+
+Finally, Figure~\ref{fig:wqos-relations} summarizes the relations between
+the considered quasiorders.
+One arrow from one qo to another means that the former is a subset
+of the latter.
+Observe that some arrows are not strictly necessary, but we included them to be
+more clear.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+  \node (0) {$\leq^2_{\mathcal{B}}$};
+  \node (1) [right of=0]{$\leq^1_{\mathcal{B}}$};
+  \node (2) [right of=1]{$\leq^r_{\mathcal{B}}$};
+
+  \node (4) [below of=0]{$\wsdir{B}$};
+  \node (3) [left of=4]{$\wsdirf{B}$};
+  \node (5) [right of=4]{$\wrdir{B}$};
+  \node (6) [right of=5]{$\wrdel{B}$};
+  \node (7) [right of=6]{$\wrfair{B}$};
+
+  \node (8) [below of=4] {$\leq^2_{\lang{B}}$};
+  \node (9)  [right of=8]{$\leq^1_{\lang{B}}$};
+  \node (10) [right of=9]{$\leq^r_{\lang{B}}$};
+  \path[->]
+  (0) edge node {} (1)
+  (0) edge node {} (3)
+  (1) edge node {} (2)
+  (1) edge node {} (4)
+  (2) edge node {} (5)
+  (2) edge node {} (6)
+  (2) edge node {} (7)
+  (3) edge node {} (4)
+  (4) edge node {} (5)
+  (5) edge node {} (6)
+  (4) edge node {} (9)
+  (3) edge node {} (8)
+  (5) edge node {} (10)
+  (6) edge node {} (10)
+  (7) edge node {} (10)
+  (6) edge node {} (7)
+  (8) edge node {} (9)
+  (9) edge node {} (10)
+  ;
+\end{tikzpicture}
+\caption{Relations between the considered quasiorders}
+\label{fig:wqos-relations}
+\end{figure}
+

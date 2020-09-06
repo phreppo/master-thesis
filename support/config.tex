@@ -1,0 +1,280 @@
+%**************************************************************
+% Frontespizio
+%**************************************************************
+
+\newcommand{\myName}{Francesco Parolini}
+
+\newcommand{\myTitle}{Simulation-based Inclusion Checking Algorithms for $\omega$-Languages}
+
+\newcommand{\myDegree}{Master Thesis}
+
+\newcommand{\myUni}{Università degli Studi di Padova}
+
+\newcommand{\myFaculty}{Master of Science in Computer Science}
+
+\newcommand{\myDepartment}{Department of Mathematics "Tullio Levi-Civita"}
+
+\newcommand{\profTitle}{Prof.}
+
+\newcommand{\myProf}{Francesco Ranzato}
+
+\newcommand{\myLocation}{Padova}
+
+\newcommand{\myAA}{2019-2020}
+
+\newcommand{\myTime}{July 2020}
+
+%**************************************************************
+% Impostazioni di impaginazione
+% see: http://wwwcdf.pd.infn.it/AppuntiLinux/a2547.htm
+%**************************************************************
+
+\setlength{\parindent}{14pt}   % larghezza rientro della prima riga
+\setlength{\parskip}{0pt}   % distanza tra i paragrafi
+
+%**************************************************************
+% Impostazioni di biblatex
+%**************************************************************
+\bibliography{support/bibliography}
+
+\defbibheading{bibliography}{
+    \cleardoublepage
+    \phantomsection
+    \addcontentsline{toc}{chapter}{\bibname}
+    \chapter*{\bibname\markboth{\bibname}{\bibname}}
+}
+
+\setlength\bibitemsep{1.5\itemsep} % spazio tra entry
+
+\DeclareBibliographyCategory{opere}
+\DeclareBibliographyCategory{web}
+
+
+
+%**************************************************************
+% Impostazioni di caption
+%**************************************************************
+\captionsetup{
+    tableposition=top,
+    figureposition=bottom,
+    font=small,
+    format=hang,
+    labelfont=bf
+}
+
+%**************************************************************
+% Impostazioni di graphicx
+%**************************************************************
+\graphicspath{{img/}} % cartella dove sono riposte le immagini
+
+%**************************************************************
+% Impostazioni di hyperref
+%**************************************************************
+\hypersetup{
+    %hyperfootnotes=false,
+    %pdfpagelabels,
+    %draft,	% = elimina tutti i link (utile per stampe in bianco e nero)
+    colorlinks=true,
+    linktocpage=true,
+    pdfstartpage=1,
+    pdfstartview=FitV,
+    % decommenta la riga seguente per avere link in nero (per esempio per la stampa in bianco e nero)
+    %colorlinks=false, linktocpage=false, pdfborder={0 0 0}, pdfstartpage=1, pdfstartview=FitV,
+    breaklinks=true,
+    pdfpagemode=UseNone,
+    pageanchor=true,
+    pdfpagemode=UseOutlines,
+    plainpages=false,
+    bookmarksnumbered,
+    bookmarksopen=true,
+    bookmarksopenlevel=1,
+    hypertexnames=true,
+    pdfhighlight=/O,
+    %nesting=true,
+    %frenchlinks,
+    urlcolor=webbrown,
+    linkcolor=RoyalBlue,
+    citecolor=Black,
+    citecolor=webgreen,
+    %pagecolor=RoyalBlue,
+    %urlcolor=Black, linkcolor=Black, citecolor=Black, %pagecolor=Black,
+    pdftitle={\myTitle},
+    pdfauthor={\textcopyright\ \myName, \myUni, \myFaculty},
+    pdfsubject={},
+    pdfkeywords={},
+    pdfcreator={pdfLaTeX},
+    pdfproducer={LaTeX}
+}
+
+%**************************************************************
+% Impostazioni di xcolor
+%**************************************************************
+\definecolor{webgreen}{rgb}{0,.5,0}
+\definecolor{webbrown}{rgb}{.6,0,0}
+
+
+%**************************************************************
+% Altro
+%**************************************************************
+
+\newcommand{\omissis}{[\dots\negthinspace]} % produce [...]
+
+% eccezioni all'algoritmo di sillabazione
+\hyphenation
+{
+    ma-cro-istru-zio-ne
+    gi-ral-din
+}
+
+\newcommand{\sectionname}{sezione}
+\addto\captionsitalian{\renewcommand{\figurename}{Figura}
+                       \renewcommand{\tablename}{Tabella}}
+\newcommand{\glsfirstoccur}{\ap{{[g]}}}
+\newcommand{\intro}[1]{\emph{\textsf{#1}}}
+
+
+% Reference: https://www.overleaf.com/learn/latex/theorems_and_proofs
+\newtheorem{theorem}{Theorem}[section]
+\theoremstyle{definition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{remark}[theorem]{Remark}
+\theoremstyle{definition}
+\newtheorem{example}[theorem]{Example}
+
+% Commands:
+% simulation-based commands: [n][w][p][r|l|s]name[f]
+% [n] -> if the relation does not hold
+% [w] -> if is a wqo on Words
+% [p] -> if parametrized by some constant
+% [r|l|s] -> r if "goes on the right", l if "goes on the left", s if is "symmetric"
+% [f] -> if has some kind of condition on final states
+% Example: wsdirf = preorder on Words, Symmetric, which uses the DIRect simulation and has a condition on Final states
+
+% Direct simulation on states
+\newcommand{\dir}[0]{\preceq^{di}}
+\newcommand{\ndir}[0]{\npreceq^{di}}
+% Reverse simulation on states
+\newcommand{\revdir}[0]{\preceq^r}
+\newcommand{\nrevdir}[0]{\npreceq^r}
+% Backward simulation on states
+\newcommand{\bwdir}[0]{\preceq^b}
+\newcommand{\nbwdir}[0]{\npreceq^b}
+% Delayed simulation on states
+\newcommand{\del}[0]{\preceq^{de}}
+\newcommand{\ndel}[0]{\npreceq^{de}}
+% Fair simulation on states
+\newcommand{\fair}[0]{\preceq^{f}}
+\newcommand{\nfair}[0]{\npreceq^{f}}
+
+% K-lookahead simulations (transitive or not)
+\newcommand{\kldir}[0]{\sqsubseteq^{k-di}}
+\newcommand{\kldel}[0]{\sqsubseteq^{k-de}}
+\newcommand{\klfair}[0]{\sqsubseteq^{k-f}}
+% Transitive version
+\newcommand{\tkldir}[0]{\preceq^{k-di}}
+\newcommand{\tkldel}[0]{\preceq^{k-de}}
+\newcommand{\tklfair}[0]{\preceq^{k-f}}
+% Parametrized transitive version
+\newcommand{\ptkl}[2]{\preceq^{#1-#2}}
+
+% Trace inclusion on states
+\newcommand{\tdir}[0]  {\preceq^{t-di}}
+\newcommand{\ntdir}[0] {\npreceq^{t-di}}
+\newcommand{\tdel}[0]  {\preceq^{t-de}}
+\newcommand{\ntdel}[0] {\npreceq^{t-de}}
+\newcommand{\tfair}[0] {\preceq^{t-f}}
+\newcommand{\ntfair}[0]{\npreceq^{t-f}}
+\newcommand{\pt}[1]{\preceq^{t-#1}}
+
+% Direct right simulation on words
+\newcommand{\wrdir}[1]{\sqsubseteq_{\mathcal{#1}}^r}
+% Direct left simulation on words
+\newcommand{\wldir}[1]{\sqsubseteq_{\mathcal{#1}}^l}
+% Direct symmetric simulation on words
+\newcommand{\wsdir}[1]{\sqsubseteq^1_{\mathcal{#1}}}
+% Direct symmetric simulation on words with condition on final states
+\newcommand{\wsdirf}[1]{\sqsubseteq_{\mathcal{#1}}^{2}}
+% Dekayed right simulation on words
+\newcommand{\wrdel}[1]{\sqsubseteq_{\mathcal{#1}}^{de,r}}
+% Fair right simulation on words
+\newcommand{\wrfair}[1]{\sqsubseteq_{\mathcal{#1}}^{fair,r}}
+% Fair symmetric simulation on words
+\newcommand{\wsfair}[1]{\sqsubseteq_{\mathcal{#1}}^{fair}}
+% parametrized k-lookahead symmetric simulation on words
+\newcommand{\pwskl}[3]{\sqsubseteq_{\mathcal{#1}}^{#2-#3}}
+% parametrized trace inclusion symmetric on words
+\newcommand{\pwst}[2]{\sqsubseteq_{\mathcal{#1}}^{t-#2}}
+
+
+% right monotonic state based wqo
+\newcommand{\wrs}[1]{\leq_{\mathcal{#1}}^{r}}
+% symmetric state based wqo
+\newcommand{\wss}[1]{\leq^1_{\mathcal{#1}}}
+% symmetric state based wqo, with final states
+\newcommand{\wssf}[1]{\leq^2_{\mathcal{#1}}}
+
+\newcommand{\automa}[1]{\mathcal{#1}=\langle Q, \Sigma, \delta, I, F\rangle}
+\newcommand{\lang}[1]{\mathcal{L}(\mathcal{#1})}
+\newcommand{\goes}[1]{\overset{#1}{\rightsquigarrow}}
+\newcommand{\goesUnder}[2]{\underset{#2}{\overset{#1}{\rightsquigarrow}}}
+\newcommand{\goesUnderf}[2]{\underset{#2}{\overset{#1}{\rightarrowtail}}}
+\newcommand{\goesr}[1]{\overset{#1}{\rightsquigarrow_R}}
+\newcommand{\goesf}[1]{\overset{#1}{\rightarrowtail}}
+\newcommand{\goesrf}[1]{\overset{#1}{\rightarrowtail_R}}
+\newcommand{\trans}[1]{\overset{#1}{\rightarrow}}
+\newcommand{\ntrans}[1]{\overset{#1}{\nrightarrow}}
+\newcommand{\transr}[1]{\overset{#1}{\rightarrow}_R}
+\newcommand{\oldSimBody}{q_1 \preceq q_3 \;\wedge\; q_1 \preceq^{R} q_3 \;\wedge\; q_2 \preceq q_4 \;\wedge\; q_2 \preceq^{R} q_4 }
+\newcommand{\trace}[4]{\pi_#1 = #2_0 \trans{#3_0} #2_1 \trans{#3_1} \cdots \trans{#3_{#4-1}} #2_#4}
+\newcommand{\traceNoName}[3]{\pi = #1_0 \trans{#2_0} #1_1 \trans{#2_1} \cdots \trans{#2_{#3-1}} #1_#3}
+\newcommand{\transs}[3]{\underbrace{\trans{#1} \cdots \trans{#2}}_{#3}}
+\newcommand{\varstate}[5]{q^{#2}_{#1^{#3}_{#4}#5}}
+\newcommand{\traceState}[2]{q^{#1}_{#2}}
+\newcommand{\istate}[2]{\varstate{i}{#1}{#1}{#2}{}}
+\newcommand{\istateMod}[3]{\varstate{i}{#1}{#1}{#2}{#3}}
+
+\newcommand{\powerset}{\raisebox{.10\baselineskip}{\ensuremath{\wp}}}
+\newcommand{\fpowerset}{\raisebox{.10\baselineskip}{\ensuremath{\wp}}_f}
+\newcommand{\lfp}{\textrm{lfp}\;}
+\newcommand{\plfp}[1]{\textrm{lfp}#1\;}
+\newcommand{\gfp}{\textrm{gfp}\;}
+\newcommand{\pgfp}[1]{\textrm{gfp}#1\;}
+\newcommand{\eqdef}{\overset{\triangle}{=}}
+\newcommand{\iffdef}{\overset{\triangle}{\Longleftrightarrow}}
+\newcommand{\angles}[1]{\langle #1 \rangle}
+\newcommand{\Di}[1]{D_{1,#1}}
+\newcommand{\Din}[2]{D_{1,#1}^{#2}(\emptyset)}
+% D initial to the n, with element
+\newcommand{\Dine}[3]{(D_{1,#1}^{#2}(\emptyset))_{#3}}
+\newcommand{\Dp}[1]{D_{2,#1}}
+\newcommand{\Dpn}[2]{D_{2,#1}^{#2}(\emptyset)}
+\newcommand{\Dpne}[3]{(D_{2,#1}^{#2}(\emptyset))_{#3}}
+\newcommand{\posti}[2]{post_{#1}^{\mathcal{#2}}(I)}
+\newcommand{\alg}[3]{\mathscr{A}_{#1, #2}(#3)}
+\newcommand{\ctx}[2]{ctx_{\mathcal{#1}}(#2)}
+\newcommand{\ctxf}[2]{ctx^F_{\mathcal{#1}}(#2)}
+\newcommand{\gfunc}{\vec{b} \cup Fn_{\mathcal{G}}(\vec{X})}
+\newcommand{\gfunclambda}{\lambda \vec{X}. (\vec{b} \cup Fn_{\mathcal{G}}(\vec{X}))}
+% \newcommand{\gc}[4]{\angles{#1,#2} \overset{\alpha}{\underset{\gamma}{\leftrightarrows}} \angles{#3,#4}}
+\newcommand{\gc}[4]{\angles{#1,#2} \galois{\alpha}{\gamma} \angles{#3,#4}}
+\newcommand{\pgc}[6]{\angles{#1,#2} \galois{#5}{#6} \angles{#3,#4}}
+\newcommand{\minor}[1]{\lfloor #1 \rfloor}
+\newcommand{\powersetSigmas}{\powerset (\Sigma^*)}
+\newcommand{\acSigmas}{AC_{\angles{\Sigma^*, \leq}}}
+\newcommand{\omegaIncName}{\texttt{BAInc}}
+\newcommand{\refOmegaInc}{\hyperref[alg:omega-lang-inc]{\omegaIncName}}
+\newcommand{\prefixesName}{\texttt{BAPrefixes}}
+\newcommand{\refPrefixes}{\hyperref[alg:prefixes]{\prefixesName}}
+\newcommand{\periodsName}{\texttt{BAPeriods}}
+\newcommand{\refPeriods}{\hyperref[alg:periods]{\periodsName}}
+\newcommand{\grammarName}{\texttt{CFGInc}}
+\newcommand{\refGrammar}{\hyperref[alg:grammar]{\grammarName}}
+\renewcommand{\thealgocf}{}
+\newcommand{\Buchi}{B{\"u}chi}
+\newcommand{\lambdaRegular}{\lambda X. b \cup Fn(X)}

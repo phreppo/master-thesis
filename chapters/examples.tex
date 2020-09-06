@@ -1,0 +1,445 @@
+\chapter{Illustrative examples}
+\label{chap:examples}
+
+In this chapter we compare, by means of some examples, a number of quasiorders.
+Since we considered a large number of preorders on $\Sigma^*$, here we
+present only the most interesting comparisons.
+Observe that the contribution given by the qos to the algorithm
+presented in \cite{ganty2020omegalang} depends if they are used
+in the subprocedure \refPrefixes{} or in \refPeriods{}.
+In the former case, one qo $\leq_1$ is used only during the computation of
+$D_{1,i}^{N_1}(\emptyset)$, where $N_1  \in \mathbb{N}$ is the least value such that
+$(D_{1,i}^{N_1+1}(\emptyset))_q \leq_1^{\forall \exists} (D_{1,i}^{N_1}(\emptyset))_q$
+for all $q \in Q$ (see Section~\ref{sec:checking-omega-lang-inc}).
+Similarly, one qo $\leq_2$ is used only during the computation of
+$D_{2,p}^{N_2}(\emptyset)$, where $N_2 \in \mathbb{N}$
+the least value such that
+$(D_{2,p}^{N_1+1}(\emptyset))_q \leq_2^{\forall \exists} (D_{2,p}^{N_1}(\emptyset))_q$
+for all $q \in Q$ and $p \in F$.
+For this reason, in the examples we omit the execution of the whole algorithm
+and we focus either on the computation of $D_{1,i}^{N_1}(\emptyset)$ or $D_{2,p}^{N_2}(\emptyset)$, depending if
+we are considering qos for prefixes or for periods.
+
+Let $\leq$ be a right-monotonic qo on words.
+We denote by $\mathscr{A}_{1,i}$ the function that associates $\leq$
+with the least $N_1 \in \mathbb{N}$ such that
+$(D_{1,i}^{N_1+1}(\emptyset))_q \leq^{\forall \exists} (D_{1,i}^{N_1}(\emptyset))_q$
+for all $q \in Q$, i.e. $\mathscr{A}_{1,i}(\leq) = N_1$.
+Similarly, we denote by $\mathscr{A}_{2,p}$ the function that associates $\leq$
+with the least $N_2 \in \mathbb{N}$ such that
+$(D_{2,p}^{N_2+1}(\emptyset))_q \leq^{\forall \exists} (D_{2,p}^{N_2}(\emptyset))_q$
+for all $q \in Q$ and for all $p \in F$, i.e. $\mathscr{A}_{2,p}(\leq) = N_2$.
+Observe that $\mathscr{A}_{1,i}$ and $\mathscr{A}_{2,p}$ return the number of iterations
+of respectively \refPrefixes{} and \refPeriods{}, and hence
+we will use them as a metric to compare the qos.
+
+Let $\leq_1$ and $\leq_2$ two right-monotonic qos used for prefixes (periods).
+We recall that if $\mathord{\leq_1} \subseteq \mathord{\leq_2}$, then
+$\mathord{\mathscr{A}_{1,i}(\leq_2)} \leq \mathord{\mathscr{A}_{1,i}(\leq_1)}$
+($\mathord{\mathscr{A}_{2,p}(\leq_2)} \leq \mathord{\mathscr{A}_{2,p}(\leq_1)}$).
+We now give practical examples that show that coarser preorders allow the
+subprocedures~\refPrefixes{} and~\refPeriods{} to converge in less iterations.
+
+\section{Prefixes}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2.5cm,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+  \node[state,initial] (q_0) {$q_0$};
+  \node[state] (q_2) [above right of=q_0, xshift=2cm, yshift=-0.5cm] {$q_2$};
+  \node[state] (q_1) [above of=q_2] {$q_1$};
+  \node[state] (q_3) [below right of=q_0, xshift=2cm, yshift=0.5cm] {$q_3$};
+  \node[state] (q_5) [below of=q_3] {$q_5$};
+  \node[state] (q_4) [left of=q_5] {$q_4$};
+  \path[->]
+  (q_0) edge node {$a$} (q_1)
+  (q_0) edge node {$b$} (q_2)
+  (q_2) edge node {$c$} (q_1)
+  (q_0) edge node {$a$} (q_3)
+  (q_0) edge node {$b$} (q_4)
+  (q_4) edge node {$c$} (q_5)
+  (q_3) edge [loop right] node {$d$} (q_3)
+  (q_5) edge [loop right] node {$d$} (q_5)
+  (q_0) edge node {$e$} (q_5)
+  ;
+\end{tikzpicture}
+\caption{Automaton used to compare $\leq^1_{\mathcal{B}}$ and $\wsdir{B}$.}
+\label{fig:example-prefix-ctx-vs-wsdir}
+\end{figure}
+
+\begin{example}
+Let $\mathcal{B}$ be the automaton in
+Figure~\ref{fig:example-prefix-ctx-vs-wsdir}.
+We compare $\leq^1_{\mathcal{B}}$ with $\wsdir{B}$.
+We remark that that $\mathord{\leq^1_{\mathcal{B}}} \subseteq \mathord{\wsdir{B}}$,
+because $\forall u,v \in \Sigma^*$,
+$\ctx{B}{u} \subseteq \ctx{B}{v} \Longrightarrow$ $\forall (q_1,q_2) \in \ctx{B}{u},
+\exists (q_3,q_4) \in \ctx{B}{v}$ such that $q_1 \revdir q_3$ and $q_2 \dir q_4$.
+This is due to the fact that $\revdir$ and $\dir$ are reflexive.
+Table~\ref{table:D_1-example0} illustrates the first four \emph{Kleene's iterates}
+of the function $D_{1,q_0}$.
+Consider $\Dine{q_0}{3}{q_1}$.
+We observe that $a \leq^1_{\mathcal{B}} bd$ doesn't hold:
+$\ctx{B}{a} = \{(q_0,q_1), (q_0,q_3)\}$ and $\ctx{B}{bc} = \{(q_0,q_1), (q_0,q_5)\}$
+so that $\ctx{B}{a} \subsetneq \ctx{B}{bc}$.
+Since $\exists u \in \Dine{q_0}{3}{q_1}$ such that $\nexists v  \in \Dine{q_0}{2}{q_1}$
+such that $v \leq^1_{\mathcal{B}} u$, $\alg{1}{q_0}{\leq^1_{\mathcal{B}}} > 1$.
+
+We observe that $a \wsdir{B} bc$: in fact $q_0 \revdir q_0$, $q_1 \dir q_1$
+and $q_3 \dir q_5$.
+For this reason, $\forall u \in \Dine{q_0}{3}{q_2}$, $\exists v \in \Dine{q_0}{2}{q_2}$
+such that $v \wrfair{B} u$.
+The reader can also verify that $a \wsdir{B} ad$, hence
+$\forall u \in \Dine{q_0}{3}{q_3}$, $\exists v \in \Dine{q_0}{2}{q_3}$
+such that $v \wsdir{B} u$.
+Similarly, $e \wsdir{B} bc$ and $e \wsdir{B} ed$, so that
+$\forall u \in \Dine{q_0}{3}{q_5}$, $\exists v \in \Dine{q_0}{2}{q_5}$
+such that $v \wsdir{B} u$.
+This implies that $\alg{1}{q_0}{\wsdir{B}} = 2$.
+It is also possible to show that $\alg{1}{q_0}{\leq^1_{\mathcal{B}}} = 3$.
+This example shows that for the automaton $\mathcal{B}$,
+\texttt{\refPrefixes{}($\mathcal{B}$,$\wsdir{B}$)} converges in strictly less iterations
+than \texttt{\refPrefixes{}($\mathcal{B}$,$\leq^1_{\mathcal{B}}$)}.
+\end{example}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ c | c | c | c | c | c | c }
+ & $q_0$ & $q_1$ & $q_2$ & $q_3$ & $q_4$ & $q_5$ \\
+\hline
+$D_{1,q_0}^0(\emptyset)$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ \\
+$D_{1,q_0}^1(\emptyset)$ & $\{ \epsilon \}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ \\
+$D_{1,q_0}^2(\emptyset)$ & $\{ \epsilon \}$ & $\{a\}$ & $\{b\}$ & $\{a\}$ & $\{b\}$ & $\{e\}$ \\
+$D_{1,q_0}^3(\emptyset)$ & $\{ \epsilon \}$ & $\{a,bc\}$ & $\{b\}$ & $\{a,ad\}$ & $\{b\}$ & $\{e, ed, bc\}$ \\
+$D_{1,q_0}^4(\emptyset)$ & $\{ \epsilon \}$ & $\{a,bc\}$ & $\{b\}$ & $\{a,ad,add\}$ & $\{b\}$ & $\{e, ed, edd, bc, bcd\}$ \\
+\end{tabular}
+\caption{The first four Kleene's iterates of $D_{1,q_0}$ on the automaton in
+Figure~\ref{fig:example-prefix-ctx-vs-wsdir}}
+\label{table:D_1-example0}
+\end{table}
+
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2.5cm,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+  \node[state,initial] (q_0) {$q_0$};
+  \node[state] (q_3) [above right of=q_0] {$q_3$};
+  \node[state] (q_4) [right of=q_3] {$q_4$};
+  \node[state] (q_1) [above of=q_3] {$q_1$};
+  \node[state] (q_2) [right of=q_1] {$q_2$};
+  \node[state] (q_5) [below right of=q_0, xshift=2.5cm] {$q_5$};
+  \node[state] (q_6) [below right of=q_0, yshift=-2.5cm] {$q_6$};
+  \node[state] (q_7) [right of=q_6] {$q_7$};
+  \path[->]
+  (q_0) edge node {$a$} (q_1)
+  (q_0) edge node {$g$} (q_5)
+  (q_0) edge node {$a$} (q_6)
+  (q_6) edge node {$b$} (q_7)
+  (q_1) edge node {$b$} (q_2)
+  (q_2) edge [loop right] node {$c$} (q_2)
+  (q_0) edge node {$d$} (q_3)
+  (q_3) edge node {$e$} (q_4)
+  (q_4) edge [right] node {$f$} (q_2)
+  (q_4) edge node {$f$} (q_5)
+  (q_5) edge [loop right] node {$c$} (q_5)
+  ;
+\end{tikzpicture}
+\caption{Automaton used to compare $\wrs{B}$ and $\wrdir{B}$.}
+\label{fig:example-prefix-state-vs-right-sim}
+\end{figure}
+
+\begin{example}
+Let $\mathcal{B}$ be the automaton in Figure~\ref{fig:example-prefix-state-vs-right-sim}.
+We compare $\wrs{B}$ with $\wrdir{B}$.
+We remark that $\mathord{\wrs{B}} \subseteq \mathord{\wrdir{B}}$,
+because $\forall u,v \in \Sigma^*$,
+$post_u^{\mathcal{B}}(I) \subseteq post_v^{\mathcal{B}}(I) \Longrightarrow
+\forall q \in post_u^{\mathcal{B}}(I) \; \exists p \in post_v^{\mathcal{B}}(I)$
+such that $q \dir p$.
+This is due to the fact that $\dir$ is reflexive.
+Table~\ref{table:D_1-example1} illustrates the first five \emph{Kleene's iterates}
+of the function $D_{1,q_0}$.
+Consider $(D_{1,q_0}^4(\emptyset))_{q_2}$.
+Observe that $post_{def}^{\mathcal{B}}(I) = \{q_2, q_5\}$, while
+$post_{ab}^{\mathcal{B}}(I) = \{q_2, q_7\}$, so that $ab \wrs{B} def$ doesn't hold.
+For this reason, $\nexists u \in (D_{1,q_0}^3(\emptyset))_{q_2}$ such that $u \wrs{B} def$.
+Observing that $def \in (D_{1,q_0}^4(\emptyset))_{q_2}$, we conclude that
+$\mathscr{A}_{1,q_0}(\wrs{B}) > 3$.
+
+On the other hand, $\forall p \in post_{ab}^{\mathcal{B}}(I)$,
+$\exists q \in post_{def}^{\mathcal{B}}(I)$ such that $p \dir q$:
+in fact $q_2 \dir q_2$ and $q_7 \dir q_2$.
+This implies $ab \dir def$, and then $\forall u \in (D_{1,q_0}^4(\emptyset))_{q_2}$,
+$\exists v \in (D_{1,q_0}^3 (\emptyset))_{q_2}$ such that $v \wrdir{B} u$.
+The reader can also verify that $\forall u \in (D_{1,q_0}^4(\emptyset))_{q_5}$,
+$\exists v \in (D_{1,q_0}^3 (\emptyset))_{q_5}$ such that $v \wrdir{B} u$.
+This implies that $\mathscr{A}_{1,q_0}(\wrdir{B}) = 3$.
+It is also possible to show that $\mathscr{A}_{1,q_0}(\wrs{B}) = 4$.
+This example shows that \texttt{\refPrefixes{}($\mathcal{B}$,$\wrdir{B}$)} converges in
+strictly less iterations than \texttt{\refPrefixes{}($\mathcal{B}$,$\wrs{B}$)}.
+\end{example}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ c | c | c | c | c | c | c | c | c}
+ & $q_0$ & $q_1$ & $q_2$ & $q_3$ & $q_4$ & $q_5$ & $q_6$ & $q_7$\\
+\hline
+$D_{1,q_0}^0(\emptyset)$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$\\
+$D_{1,q_0}^1(\emptyset)$ & $\{ \epsilon \}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$\\
+$D_{1,q_0}^2(\emptyset)$ & $\{ \epsilon \}$ & $\{a\}$ & $\emptyset$ & $\{d\}$ & $\emptyset$ & $\{g\}$ & $\{a\}$ & $\emptyset$\\
+$D_{1,q_0}^3(\emptyset)$ & $\{ \epsilon \}$ & $\{a\}$ & $\{ab\}$ & $\{d\}$ & $\{de\}$ & $\{g, gc\}$ & $\{a\}$ & $\{ab\}$\\
+$D_{1,q_0}^4(\emptyset)$ & $\{ \epsilon \}$ & $\{a\}$ & $\{ab, abc, def\}$ & $\{d\}$ & $\{de\}$ & $\{g, gc, gcc, def\}$ & $\{a\}$ & $\{ab\}$\\
+$D_{1,q_0}^5(\emptyset)$ & $\{ \epsilon \}$ & $\{a\}$ & $\{ab, abc, abcc, def\}$ & $\{d\}$ & $\{de\}$ & $\{g, gc, gcc, gccc, def\}$ & $\{a\}$ & $\{ab\}$\\
+\end{tabular}
+\caption{The first five Kleene's iterates of $D_{1,q_0}$ on the automaton in
+Figure~\ref{fig:example-prefix-state-vs-right-sim}}
+\label{table:D_1-example1}
+\end{table}
+
+% Per lesempio di delayed vs direct on words basta rendere q_5 finale
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2.5cm,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+  \node[state,initial] (q_0) {$q_0$};
+  \node[state] (q_2) [below of=q_0] {$q_2$};
+  \node[state] (q_1) [left of=q_2] {$q_1$};
+  \node[state,accepting] (q_3) [right of=q_2] {$q_3$};
+  \path[->]
+  (q_0) edge node {$a$} (q_1)
+  (q_0) edge node {$c$} (q_2)
+  (q_0) edge node {$c$} (q_3)
+  (q_1) edge node {$b$} (q_2)
+  (q_2) edge node {$d$} (q_3)
+  (q_3) edge [loop below] node {$d$} (q_3)
+  ;
+\end{tikzpicture}
+\caption{Automaton used to compare $\wrdir{B}$ and $\wrdel{B}$.}
+\label{fig:example-prefix-right-sim-vs-right-del-sim}
+\end{figure}
+
+\begin{example}
+Let $\mathcal{B}$ be the automaton in
+Figure~\ref{fig:example-prefix-right-sim-vs-right-del-sim}.
+We compare $\wrdir{B}$ with $\wrdel{B}$.
+We remark that $\mathord{\wrdir{B}} \subseteq \mathord{\wrdel{B}}$,
+because $\forall u,v \in \Sigma^*$,
+if $\forall p \in post_u^{\mathcal{B}}(I), \exists q \in post_v^{\mathcal{B}}(I)$
+such that $p \dir q$, then it also holds that $p \del q$.
+This is due to the fact that $\mathord{\dir} \subseteq \mathord{\del}$
+(see Section~\ref{sec:simulation}).
+Table~\ref{table:D_1-example2} illustrates the first four \emph{Kleene's iterates}
+of the function $D_{1,q_0}$.
+Consider $\Dine{q_0}{3}{q_2}$.
+We observe that $c \wrdir{B} ab$ doesn't hold:
+$\posti{c}{B} = \{q_2, q_3\}$, $\posti{ab}{B} = \{q_2\}$ and since $q_2$ is
+not a final state $q_3 \dir q_2$ doesn't hold.
+This implies that $\alg{1}{q_0}{\wrdir{B}} > 2$.
+
+We observe that $c \wrdel{B} ab$: in fact $q_3 \del q_2$.
+From $q_3$ starts the infinite (and fair)
+trace $\pi_0 = q_3 \trans{d} q_3 \trans{d} \cdots$ in which each state is final.
+From $q_2$ starts the infinite (and fair) trace
+$\pi_1 = q_2 \trans{d} q_3 \trans{d} \cdots$ that matches $\pi_0$.
+In particular, for each final state in $\pi_0$ there exists a corresponding
+final state in $\pi_1$.
+
+It also holds that $c \wrdel{B} cd$: $\posti{c}{B} = \{q_2,q_3\}$,
+$\posti{cd}{B} = \{q_3\}$, $q_2 \del q_3$ and $q_3 \del q_3$.
+This implies that $\alg{1}{q_0}{\wrdel{B}} = 2$.
+It is also possible to show that $\alg{1}{q_0}{\wrdir{B}} = 3$.
+This example shows that for the automaton $\mathcal{B}$,
+\texttt{\refPrefixes{}($\mathcal{B}$,$\wrdel{B}$)} converges in strictly less iterations
+than \texttt{\refPrefixes{}($\mathcal{B}$,$\wrdir{B}$)}.
+\end{example}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ c | c | c | c | c }
+ & $q_0$ & $q_1$ & $q_2$ & $q_3$ \\
+\hline
+$D_{1,q_0}^0(\emptyset)$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ \\
+$D_{1,q_0}^1(\emptyset)$ & $\{\epsilon\}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ \\
+$D_{1,q_0}^2(\emptyset)$ & $\{\epsilon\}$ & $\{a\}$ & $\{c\}$ & $\{c\}$ \\
+$D_{1,q_0}^3(\emptyset)$ & $\{\epsilon\}$ & $\{a\}$ & $\{c, ab\}$ & $\{c, cd\}$ \\
+$D_{1,q_0}^4(\emptyset)$ & $\{\epsilon\}$ & $\{a\}$ & $\{c, ab\}$ & $\{c, cd, cdd\}$ \\
+\end{tabular}
+\caption{The first five Kleene's iterates of $D_{1,q_0}$ on the automaton in
+Figure~\ref{fig:example-prefix-right-sim-vs-right-del-sim}}
+\label{table:D_1-example2}
+\end{table}
+
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2.5cm,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+  \node[state,initial] (q_0) {$q_0$};
+  \node[state] (q_3) [above right of=q_0, yshift=-0.5cm] {$q_3$};
+  \node[state] (q_4) [right of=q_3] {$q_4$};
+  \node[state] (q_1) [above of=q_3] {$q_1$};
+  \node[state] (q_2) [right of=q_1] {$q_2$};
+  \node[state] (q_7) [below right of=q_0, xshift=2.5cm, yshift=0.5cm] {$q_7$};
+  \node[state,accepting] (q_6) [below of=q_7] {$q_6$};
+  \node[state] (q_5) [left of=q_6] {$q_5$};
+  \path[->]
+  (q_0) edge node {$a$} (q_1)
+  (q_1) edge node {$b$} (q_2)
+  (q_2) edge [loop right] node {$c$} (q_2)
+  (q_0) edge node {$d$} (q_3)
+  (q_3) edge node {$e$} (q_4)
+  (q_4) edge node {$f$} (q_2)
+  (q_4) edge node {$f$} (q_7)
+  (q_0) edge node {$a$} (q_5)
+  (q_5) edge node {$b$} (q_6)
+  (q_6) edge node {$a$} (q_7)
+  (q_0) edge node {$g$} (q_7)
+  (q_7) edge [loop right] node {$a$} (q_7)
+  ;
+\end{tikzpicture}
+\caption{Automaton used to compare $\wrdel{B}$ and $\wrfair{B}$.}
+\label{fig:example-prefix-del-vs-fair}
+\end{figure}
+
+\begin{example}
+Let $\mathcal{B}$ be the automaton in
+Figure~\ref{fig:example-prefix-del-vs-fair}.
+We compare $\wrdel{B}$ with $\wrfair{B}$.
+We remark that $\mathord{\wrdel{B}} \subseteq \mathord{\wrfair{B}}$,
+because $\forall u,v \in \Sigma^*$,
+if $\forall p \in post_u^{\mathcal{B}}(I), \exists q \in post_v^{\mathcal{B}}(I)$
+such that $p \del q$, then it also holds that $p \fair q$.
+This is due to the fact that $\mathord{\del} \subseteq \mathord{\fair}$
+(see Section~\ref{sec:simulation}).
+Table~\ref{table:D_1-example3} illustrates the first four \emph{Kleene's iterates}
+of the function $D_{1,q_0}$.
+Consider $\Dine{q_0}{3}{q_2}$.
+We observe that $ab \wrdel{B} def$ doesn't hold:
+$\posti{ab}{B} = \{q_2, q_6\}$, $\posti{def}{B} = \{q_2, q_7\}$
+and while $q_2 \del q_2$, it is not true that $q_6 \del q_2$ or $q_6 \del q_7$.
+This is due to the fact that the trace $\pi_0 = q_6 \trans{a} q_7 \trans{a} \cdots$
+contains a final state, and the only trace $\pi_1 = q_7 \trans{a} q_7 \trans{a} \cdots$
+that starts from $q_7$ that can match the $a$'s contains no final state.
+This implies that $\alg{1}{q_0}{\wrdel{B}} > 2$.
+
+We observe that $ab \wrfair{B} def$: in fact $q_6 \fair q_7$.
+From $q_6$ starts the trace $\pi_0$, but since it doesn't contain one infinite
+number of final states it is not fair.
+This implies that since $q_7$ can match $\pi_0$ with $\pi_1$, $q_6 \fair q_7$.
+For this reason, $ab \wrfair{B} def$ so that
+$\forall u \in \Dine{q_0}{3}{q_2}$, $\exists v \in \Dine{q_0}{2}{q_2}$
+such that $v \wrfair{B} u$.
+The reader can also verify that $g \wrfair{B} gaa$, $g \wrfair{B} aba$
+and $g \wrfair{B} def$, hence
+$\forall u \in \Dine{q_0}{3}{q_7}$, $\exists v \in \Dine{q_0}{2}{q_7}$
+such that $v \wrfair{B} u$.
+This implies that $\alg{1}{q_0}{\wrfair{B}} = 2$.
+It is also possible to show that $\alg{1}{q_0}{\wrdel{B}} = 3$.
+This example shows that for the automaton $\mathcal{B}$,
+\texttt{\refPrefixes{}($\mathcal{B}$,$\wrfair{B}$)} converges in strictly less iterations
+than \texttt{\refPrefixes{}($\mathcal{B}$,$\wrdel{B}$)}.
+\end{example}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ c | c | c | c | c | c | c | c | c}
+ & $q_0$ & $q_1$ & $q_2$ & $q_3$ & $q_4$ & $q_5$ & $q_6$ & $q_7$\\
+\hline
+$D_{1,q_0}^0(\emptyset)$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$\\
+$D_{1,q_0}^1(\emptyset)$ & $\{ \epsilon \}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$\\
+$D_{1,q_0}^2(\emptyset)$ & $\{ \epsilon \}$ & $\{a\}$ & $\emptyset$ & $\{d\}$ & $\emptyset$ & $\{a\}$ & $\emptyset$ & $\{g\}$\\
+$D_{1,q_0}^2(\emptyset)$ & $\{ \epsilon \}$ & $\{a\}$ & $\{ab\}$ & $\{d\}$ & $\{de\}$ & $\{a\}$ & $\{ab\}$ & $\{g, ga\}$\\
+$D_{1,q_0}^3(\emptyset)$ & $\{ \epsilon \}$ & $\{a\}$ & $\{ab, abc, def\}$ & $\{d\}$ & $\{de\}$ & $\{a\}$ & $\{ab\}$ & $\{g, ga, gaa, aba, def\}$\\
+$D_{1,q_0}^4(\emptyset)$ & $\{ \epsilon \}$ & $\{a\}$ & $\{ab, abc, abcc,$ & $\{d\}$ & $\{de\}$ & $\{a\}$ & $\{ab\}$ & $\{g, ga, gaa, gaaa,$\\
+&  &  & $def, defc\}$ &  &  &  &  & $aba, abaa, def, defa\}$\\
+\end{tabular}
+\caption{The first four Kleene's iterates of $D_{1,q_0}$ on the automaton in
+Figure~\ref{fig:example-prefix-del-vs-fair}}
+\label{table:D_1-example3}
+\end{table}
+
+
+\section{Periods}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2.5cm,auto]
+  \tikzstyle{every state}=[fill={rgb:black,1;white,10}]
+  \node[state,initial] (q_0) {$q_0$};
+  \node[state] (q_1) [above right of=q_0, xshift=1.25cm] {$q_1$};
+  \node[state] (q_2) [right of=q_1] {$q_2$};
+  \node[state] (q_3) [below right of=q_0] {$q_3$};
+  \node[state] (q_4) [right of=q_3] {$q_4$};
+  \node[state] (q_5) [right of=q_4] {$q_5$};
+  \node[state,accepting] (q_6) [above right of=q_5] {$q_6$};
+  \node[state,accepting] (q_7) [above right of=q_6] {$q_7$};
+  \node[state] (q_8) [below right of=q_6] {$q_8$};
+  \path[->]
+  (q_0) edge node {$a$} (q_1)
+  (q_1) edge node {$b$} (q_2)
+  (q_2) edge node {$c$} (q_6)
+  (q_0) edge node {$a,c$} (q_3)
+  (q_3) edge node {$d$} (q_4)
+  (q_4) edge node {$e$} (q_5)
+  (q_5) edge node {$a,c$} (q_6)
+  (q_6) edge node {$b$} (q_7)
+  (q_6) edge node {$d$} (q_8)
+  (q_8) edge node {$e$} (q_7)
+  (q_7) edge [loop above] node {$a$} (q_7)
+  ;
+\end{tikzpicture}
+\caption{Automaton used to compare $\wssf{B}$ and $\wsdirf{B}$.}
+\label{fig:example-state-vs-dir-periods}
+\end{figure}
+
+\begin{example}
+Let $\mathcal{B}$ be the automaton in
+Figure~\ref{fig:example-state-vs-dir-periods}.
+We compare $\wssf{B}$ with $\wsdirf{B}$.
+We remark that $\mathord{\wssf{B}} \subseteq \mathord{\wsdirf{B}}$,
+because $\forall u,v \in \Sigma^*$,
+if $\ctx{B}{u} \subseteq \ctx{B}{v}$ and $\ctxf{B}{u} \subseteq \ctxf{B}{v}$ then
+$\forall (q_1,q_2) \in \ctx{B}{u}$ $\exists (q_3,q_4) \in \ctx{B}{v}$
+such that $q_1 \bwdir q_3$ and $q_2 \dir q_4$.
+In particular, consider $q_3 = q_1$ and $q_4 = q_2$.
+Furthermore, $q_1 \goesf{u} q_2$ implies $(q_1,q_2) \in \ctxf{B}{u}$,
+so that $(q_3,q_4) \in \ctxf{B}{v}$.
+Table~\ref{table:D_2-example1} illustrates the first three \emph{Kleene's iterates}
+of the function $\Dp{q_6}$.
+Consider $\Dpne{q_6}{2}{q_7}$.
+We observe that $b \wssf{B} de$ doesn't hold:
+$\ctx{B}{b} = \{(q_1,q_2), (q_6,q_7)\}$ and $\ctx{B}{de} = \{(q_3,q_5), (q_6,q_7)\}$.
+For this reason, $\exists u \in \Dpne{q_6}{2}{q_7}$ such that
+$\nexists v \in \Dpne{q_6}{1}{q_7}$ such that $v \wssf{B} u$.
+This implies that $\alg{2}{q_6}{\wssf{B}} > 1$.
+
+We observe that $b \wsdirf{B} de$.
+This is due to the fact that $q_1 \bwdir q_3$, $q_2 \dir q_5$, $q_6 \bwdir q_6$
+and $q_7 \dir q_7$.
+For this reason,
+$\forall u \in \Dpne{q_6}{2}{q_7}$, $\exists v \in \Dpne{q_6}{1}{q_7}$
+such that $v \wsdirf{B} u$.
+This implies that $\alg{2}{q_6}{\wsdirf{B}} = 1$.
+It is also possible to show that $\alg{2}{q_6}{\wssf{B}} = 2$.
+This example shows that for the automaton $\mathcal{B}$,
+\texttt{\refPeriods{}($\mathcal{B}$, $\wssf{B}$)} converges in strictly less iterations
+than \texttt{\refPeriods{}($\mathcal{B}$,$\wsdirf{B}$)}.
+\end{example}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ c | c | c | c | c | c | c | c | c | c}
+ & $q_0$ & $q_1$ & $q_2$ & $q_3$ & $q_4$ & $q_5$ & $q_6$ & $q_7$ & $q_8$\\
+\hline
+$\Dpn{q_6}{0}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$\\
+$\Dpn{q_6}{1}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{b\}$ & $\{d\}$\\
+$\Dpn{q_6}{2}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{b,ba,de\}$ & $\{d\}$\\
+$\Dpn{q_6}{3}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\{b,ba,baa,de,dea\}$ & $\{d\}$\\
+\end{tabular}
+\caption{The first three Kleene's iterates of $\Dp{q_6}$ on the automaton in
+Figure~\ref{fig:example-state-vs-dir-periods}}
+\label{table:D_2-example1}
+\end{table}
+
