@@ -1,4 +1,4 @@
-# Master Thesis
+# Simulation-based Inclusion Checking Algorithms for ω-Languages
 
 ![GitHub Logo](./img/logo.png)
 
